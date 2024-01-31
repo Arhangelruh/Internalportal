@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\InternalPortal.Logic\InternalPortal.Core.csproj" />
+    <ProjectReference Include="..\InternalPortal.Core\InternalPortal.Core.csproj" />
   </ItemGroup>
 
 </Project>
