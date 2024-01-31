@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InternalPortal.Data", "src\InternalPortal.Data\InternalPortal.Data.csproj", "{8E1078F7-0754-4CA9-A5EF-6D1DE558BB37}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InternalPortal.Infrastucture", "src\InternalPortal.Data\InternalPortal.Infrastucture.csproj", "{8E1078F7-0754-4CA9-A5EF-6D1DE558BB37}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InternalPortal.Logic", "src\InternalPortal.Logic\InternalPortal.Logic.csproj", "{D573099F-2977-47F1-AEA8-00959368E319}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InternalPortal.Core", "src\InternalPortal.Logic\InternalPortal.Core.csproj", "{D573099F-2977-47F1-AEA8-00959368E319}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InternalPortal.Web", "src\InternalPortal.Web\InternalPortal.Web.csproj", "{CDCBE4C8-0E95-47A6-9357-005E91CF0FAF}"
 EndProject

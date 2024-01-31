@@ -14,4 +14,9 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\InternalPortal.Data\InternalPortal.Infrastucture.csproj" />
+    <ProjectReference Include="..\InternalPortal.Logic\InternalPortal.Core.csproj" />
+  </ItemGroup>
+
 </Project>
