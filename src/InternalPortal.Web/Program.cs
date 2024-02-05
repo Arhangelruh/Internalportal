@@ -1,12 +1,24 @@
+using InternalPortal.Core.Interfaces;
+using InternalPortal.Infrastucture.Data.Context;
+using InternalPortal.Infrastucture.Data.Repository;
 using Microsoft.AspNetCore.Authentication.Negotiate;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
+string connection = builder.Configuration.GetConnectionString("InternalPortalDatabase");
+builder.Services.AddDbContext<InternalPortalContext>(options =>
+ options.UseNpgsql(connection));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
    .AddNegotiate();
+
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
 
 builder.Services.AddAuthorization(options =>
 {
