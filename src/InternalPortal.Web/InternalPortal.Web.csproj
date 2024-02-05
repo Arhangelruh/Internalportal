@@ -16,7 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\InternalPortal.Core\InternalPortal.Core.csproj" />
-    <ProjectReference Include="..\InternalPortal.Infrastucture\InternalPortal.Infrastucture.csproj" />
+    <ProjectReference Include="..\InternalPortal.Infrastructure\InternalPortal.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
