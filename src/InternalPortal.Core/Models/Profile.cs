@@ -1,4 +1,4 @@
-﻿namespace InternalPortal.Infrastucture.Data.Models
+﻿namespace InternalPortal.Core.Models
 {
     /// <summary>
     /// Data model Profile.
@@ -23,7 +23,7 @@
         /// <summary>
         /// Middle name.
         /// </summary>
-        public string MiddleName { get; set; }
+        public string? MiddleName { get; set; }
 
         /// <summary>
         /// Users Sid from LDAP.

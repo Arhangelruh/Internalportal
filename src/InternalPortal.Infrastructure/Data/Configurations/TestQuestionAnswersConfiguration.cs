@@ -1,5 +1,5 @@
-﻿using InternalPortal.Infrastucture.Data.Constants;
-using InternalPortal.Infrastucture.Data.Models;
+﻿using InternalPortal.Core.Models;
+using InternalPortal.Infrastucture.Data.Constants;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

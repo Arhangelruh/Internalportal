@@ -1,4 +1,4 @@
-﻿namespace InternalPortal.Infrastucture.Data.Models
+﻿namespace InternalPortal.Core.Models
 {
     /// <summary>
     /// Data model answer.

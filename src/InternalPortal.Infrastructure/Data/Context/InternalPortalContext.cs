@@ -1,5 +1,5 @@
-﻿using InternalPortal.Infrastucture.Data.Configurations;
-using InternalPortal.Infrastucture.Data.Models;
+﻿using InternalPortal.Core.Models;
+using InternalPortal.Infrastucture.Data.Configurations;
 using Microsoft.EntityFrameworkCore;
 
 namespace InternalPortal.Infrastucture.Data.Context
