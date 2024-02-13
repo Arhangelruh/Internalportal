@@ -31,5 +31,10 @@
         /// Test Answer connection table.
         /// </summary>
         public const string TestsAnswers = nameof(TestsAnswers);
+
+        /// <summary>
+        /// Test score table.
+        /// </summary>
+        public const string TestsScore = nameof(TestsScore);
     }
 }

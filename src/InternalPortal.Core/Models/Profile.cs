@@ -34,5 +34,10 @@
         /// Navigation to tests.
         /// </summary>
         public ICollection<Test> Tests { get; set; }
+
+        /// <summary>
+        /// Navigation to TestScore.
+        /// </summary>
+        public TestScore TestScore { get; set; }
     }
 }

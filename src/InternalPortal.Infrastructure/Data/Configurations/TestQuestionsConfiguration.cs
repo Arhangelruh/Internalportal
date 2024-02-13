@@ -22,6 +22,9 @@ namespace InternalPortal.Infrastucture.Data.Configurations
                .IsRequired()
                .HasMaxLength(ConfigurationConstants.SqlMaxLengthLong);
 
+            builder.Property(question => question.IsActual)
+                .IsRequired();
+
             builder.HasOne(testtopic => testtopic.TestTopic)
                 .WithMany(testquestion => testquestion.TestQuestions)
                 .HasForeignKey(testquestion => testquestion.TestTopicId)

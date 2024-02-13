@@ -16,6 +16,11 @@
         public string TopicName { get; set; }
 
         /// <summary>
+        /// Acual topic.
+        /// </summary>
+        public bool IsActual { get; set; }
+
+        /// <summary>
         /// Navigation to questions.
         /// </summary>
         public ICollection<TestQuestions> TestQuestions { get; set; }

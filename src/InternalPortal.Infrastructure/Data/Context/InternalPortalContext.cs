@@ -1,4 +1,5 @@
 ﻿using InternalPortal.Core.Models;
+using InternalPortal.Infrastructure.Data.Configurations;
 using InternalPortal.Infrastucture.Data.Configurations;
 using Microsoft.EntityFrameworkCore;
 
@@ -39,6 +40,11 @@ namespace InternalPortal.Infrastucture.Data.Context
         /// </summary>
         public DbSet<TestsAnswers> TestsAnswers { get; set; }
 
+        /// <summary>
+        /// Test score.
+        /// </summary>
+        public DbSet<TestScore> TestsScore { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder = modelBuilder ?? throw new ArgumentNullException(nameof(modelBuilder));
@@ -50,6 +56,7 @@ namespace InternalPortal.Infrastucture.Data.Context
             modelBuilder.ApplyConfiguration(new TestTopicsConfiguration());
             modelBuilder.ApplyConfiguration(new TestsAnswersConfiguration());
             modelBuilder.ApplyConfiguration(new TestConfiguration());
+            modelBuilder.ApplyConfiguration(new TestsScoreConfiguration());
 
             base.OnModelCreating(modelBuilder);
         }
