@@ -39,5 +39,11 @@ namespace InternalPortal.Core.Interfaces
         /// <param name="testAnswerId">Test answer id</param>
         /// <returns>result</returns>
         Task<bool> DeleteAsync(int testAnswerId);
+
+        /// <summary>
+        /// Change actual status.
+        /// </summary>
+        /// <param name="testQuestionAnswers">Answer data model</param>        
+        Task ChangeStatusAsync(TestQuestionAnswers testQuestionAnswers);
     }
 }

@@ -37,7 +37,7 @@ namespace InternalPortal.Core.Services
                     {
                         return false;
                     }
-                }                
+                }
             }
 
             var getquestion = await _repository.GetEntityAsync(question => question.Id.Equals(testQuestionId));
@@ -50,18 +50,21 @@ namespace InternalPortal.Core.Services
         public async Task<bool> EditAsync(TestQuestions testQuestion)
         {
             var getAnswers = await _answerService.GetAnswersByQuestionAsync(testQuestion.Id);
-            if (getAnswers.Count != 0) { 
-               foreach(var answer in getAnswers)
+            if (getAnswers.Count != 0)
+            {
+                foreach (var answer in getAnswers)
                 {
-                    var checkInTests = await _repositoryTests.GetEntityAsync(testanswer=>testanswer.AnswerId.Equals(answer.Id));
-                    if (checkInTests != null ) {
-                       return false;
+                    var checkInTests = await _repositoryTests.GetEntityAsync(testanswer => testanswer.AnswerId.Equals(answer.Id));
+                    if (checkInTests != null)
+                    {
+                        return false;
                     }
                 }
             }
 
             var editQuestion = await _repository.GetEntityAsync(q => q.Id.Equals(testQuestion.Id));
-            editQuestion.QuestionText = testQuestion.QuestionText;            
+            editQuestion.QuestionText = testQuestion.QuestionText;
+            editQuestion.IsActual = testQuestion.IsActual;
 
             _repository.Update(editQuestion);
             await _repository.SaveChangesAsync();
@@ -84,6 +87,15 @@ namespace InternalPortal.Core.Services
                 .ToListAsync();
 
             return getquestions;
+        }
+
+        public async Task ChangeStatusAsync(TestQuestions testQuestion)
+        {
+            var editQuestion = await _repository.GetEntityAsync(q => q.Id.Equals(testQuestion.Id));
+            editQuestion.IsActual = testQuestion.IsActual;
+
+            _repository.Update(editQuestion);
+            await _repository.SaveChangesAsync();
         }
     }
 }

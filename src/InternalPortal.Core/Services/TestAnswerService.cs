@@ -47,6 +47,7 @@ namespace InternalPortal.Core.Services
                 var editAnswer = await _repository.GetEntityAsync(q => q.Id.Equals(testQuestionAnswers.Id));
                 editAnswer.AnswerText = testQuestionAnswers.AnswerText;
                 editAnswer.Meaning = testQuestionAnswers.Meaning;
+                editAnswer.IsActual = testQuestionAnswers.IsActual;
 
                 _repository.Update(editAnswer);
                 await _repository.SaveChangesAsync();
@@ -70,6 +71,15 @@ namespace InternalPortal.Core.Services
             var getAnswer = await _repository.GetEntityAsync(answer=> answer.Id.Equals(testAnswerId));
 
             return getAnswer;
+        }
+
+        public async Task ChangeStatusAsync(TestQuestionAnswers testQuestionAnswers)
+        {
+            var editAnswer = await _repository.GetEntityAsync(q => q.Id.Equals(testQuestionAnswers.Id));
+            editAnswer.IsActual = testQuestionAnswers.IsActual;
+
+            _repository.Update(editAnswer);
+            await _repository.SaveChangesAsync();
         }
     }
 }

@@ -73,5 +73,14 @@ namespace InternalPortal.Core.Services
 
             return testTopic;
         }
+
+        public async Task ChangeStatusAsync(TestTopics testTopic)
+        {
+            var editTopic = await _repository.GetEntityAsync(q => q.Id.Equals(testTopic.Id));
+            editTopic.IsActual = editTopic.IsActual;
+
+            _repository.Update(editTopic);
+            await _repository.SaveChangesAsync();
+        }
     }
 }
