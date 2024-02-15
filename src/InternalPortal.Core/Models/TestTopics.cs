@@ -24,10 +24,5 @@
         /// Navigation to questions.
         /// </summary>
         public ICollection<TestQuestions> TestQuestions { get; set; }
-
-        /// <summary>
-        /// Navigation to Tests.
-        /// </summary>
-        public ICollection<Test> Tests { get; set; }
     }
 }

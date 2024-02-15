@@ -18,11 +18,6 @@ namespace InternalPortal.Infrastucture.Data.Configurations
             builder.ToTable(TableConstants.Tests, SchemaConstants.Test)
                 .HasKey(test => test.Id);
 
-            builder.HasOne(testtopic => testtopic.TestTopic)
-                .WithMany(test => test.Tests)
-                .HasForeignKey(testtopic => testtopic.TestTopicId)
-                .OnDelete(DeleteBehavior.Restrict);
-
             builder.HasOne(test => test.Profile)
                 .WithMany(tests => tests.Tests)
                 .HasForeignKey(test => test.ProfileId)
