@@ -8,12 +8,12 @@ namespace InternalPortal.Core.Services
     public class TestTopicService : ITestTopicService
     {
         private readonly IRepository<TestTopics> _repository;
-        private readonly TestQuestionService _testQuestionService;
+        private readonly ITestQuestionService _testQuestionService;
         
-        public TestTopicService(IRepository<TestTopics> repository, TestQuestions testQuestionService)
+        public TestTopicService(IRepository<TestTopics> repository, ITestQuestionService testQuestionService)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
-            _testQuestionService = _testQuestionService ?? throw new ArgumentNullException(nameof(testQuestionService));
+            _testQuestionService = testQuestionService ?? throw new ArgumentNullException(nameof(testQuestionService));
         }
 
         public async Task AddAsync(TestTopics testTopic)
@@ -52,6 +52,7 @@ namespace InternalPortal.Core.Services
 
             var editTopic = await _repository.GetEntityAsync(q => q.Id.Equals(testTopic.Id));
             editTopic.TopicName = testTopic.TopicName;
+            editTopic.IsActual = testTopic.IsActual;
 
             _repository.Update(editTopic);
             await _repository.SaveChangesAsync();
@@ -72,6 +73,15 @@ namespace InternalPortal.Core.Services
             }
 
             return testTopic;
+        }
+
+        public async Task<List<TestTopics>> GetActiveTopicsAsync()
+        {
+            return await _repository
+                .GetAll()
+                .Where(topic=>topic.IsActual==true)
+                .AsNoTracking()
+                .ToListAsync();
         }
 
         public async Task ChangeStatusAsync(TestTopics testTopic)

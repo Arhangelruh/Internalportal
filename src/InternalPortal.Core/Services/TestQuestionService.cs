@@ -7,10 +7,10 @@ namespace InternalPortal.Core.Services
     public class TestQuestionService : ITestQuestionService
     {
         private readonly IRepository<TestQuestions> _repository;
-        private readonly TestAnswerService _answerService;
+        private readonly ITestAnswerService _answerService;
         private readonly IRepository<TestsAnswers> _repositoryTests;
 
-        public TestQuestionService(IRepository<TestQuestions> repository, TestAnswerService answerService, IRepository<TestsAnswers> repositoryTests)
+        public TestQuestionService(IRepository<TestQuestions> repository, ITestAnswerService answerService, IRepository<TestsAnswers> repositoryTests)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _answerService = answerService ?? throw new ArgumentNullException(nameof(answerService));
@@ -84,6 +84,17 @@ namespace InternalPortal.Core.Services
                 .GetAll()
                 .AsNoTracking()
                 .Where(question => question.TestTopicId == testTopicId)
+                .ToListAsync();
+
+            return getquestions;
+        }
+
+        public async Task<List<TestQuestions>> GetActualQuestionByTopicAsync(int testTopicId)
+        {
+            var getquestions = await _repository
+                .GetAll()
+                .AsNoTracking()
+                .Where(question => question.TestTopicId == testTopicId && question.IsActual == true)
                 .ToListAsync();
 
             return getquestions;

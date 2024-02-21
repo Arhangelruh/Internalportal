@@ -5,7 +5,7 @@ namespace InternalPortal.Core.Interfaces
     /// <summary>
     /// Sevice for working with Test Topics data.
     /// </summary>
-    internal interface ITestTopicService
+    public interface ITestTopicService
     {
         /// <summary>
         /// Add topic.
@@ -31,6 +31,12 @@ namespace InternalPortal.Core.Interfaces
         /// </summary>
         /// <returns>All test topics</returns>
         Task <List<TestTopics>> GetAllTopicsAsync();
+
+        /// <summary>
+        /// Get all active Test Topics.
+        /// </summary>
+        /// <returns>Actual test topics</returns>
+        Task<List<TestTopics>> GetActiveTopicsAsync();
 
         /// <summary>
         /// Delete TestTopic.

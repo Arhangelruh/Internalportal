@@ -26,7 +26,7 @@ namespace InternalPortal.Core.Services
 
         public async Task<bool> DeleteAsync(int testAnswerId)
         {
-            var getTestsResult = _repositoryTests.GetEntityAsync(test => test.AnswerId.Equals(testAnswerId));
+            var getTestsResult = await _repositoryTests.GetEntityAsync(test => test.AnswerId.Equals(testAnswerId));
             if (getTestsResult == null) {
                 var getAnswer = await _repository.GetEntityAsync(answer =>answer.Id.Equals(testAnswerId));
                 
@@ -41,8 +41,8 @@ namespace InternalPortal.Core.Services
         {
             ArgumentNullException.ThrowIfNull(testQuestionAnswers);
 
-            var getTestsResult = _repositoryTests.GetEntityAsync(test => test.AnswerId.Equals(testQuestionAnswers.Id));
-            if (getTestsResult != null)
+            var getTestsResult =await _repositoryTests.GetEntityAsync(test => test.AnswerId.Equals(testQuestionAnswers.Id));
+            if (getTestsResult == null)
             {
                 var editAnswer = await _repository.GetEntityAsync(q => q.Id.Equals(testQuestionAnswers.Id));
                 editAnswer.AnswerText = testQuestionAnswers.AnswerText;
@@ -51,6 +51,7 @@ namespace InternalPortal.Core.Services
 
                 _repository.Update(editAnswer);
                 await _repository.SaveChangesAsync();
+                return true;
             }
             return false;
         }
@@ -63,6 +64,17 @@ namespace InternalPortal.Core.Services
                 .Where(answer => answer.TestQuestionId == testQuestionId)
                 .ToListAsync();
             
+            return getanswers;
+        }
+
+        public async Task<List<TestQuestionAnswers>> GetActualAnswersByQuestionAsync(int testQuestionId)
+        {
+            var getanswers = await _repository
+                .GetAll()
+                .AsNoTracking()
+                .Where(answer => answer.TestQuestionId == testQuestionId && answer.IsActual==true)
+                .ToListAsync();
+
             return getanswers;
         }
 

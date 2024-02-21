@@ -34,6 +34,13 @@ namespace InternalPortal.Core.Interfaces
         Task<List<TestQuestions>> GetQuestionByTopicAsync(int testTopicId);
 
         /// <summary>
+        /// Get actual questions by topic.
+        /// </summary>
+        /// <param name="testTopicId">topic id</param>
+        /// <returns>List questions</returns>
+        Task<List<TestQuestions>> GetActualQuestionByTopicAsync(int testTopicId);
+
+        /// <summary>
         /// Delete question.
         /// </summary>
         /// <param name="testQuestionId">Test question id</param>
