@@ -24,6 +24,11 @@ namespace InternalPortal.Infrastucture.Data.Configurations
             builder.Property(topic => topic.TopicName)
                 .IsRequired()
                 .HasMaxLength(ConfigurationConstants.SqlMaxLengthMedium);
+
+            builder.HasOne(cashtest => cashtest.CashTest)
+                .WithMany(testopic => testopic.TestTopics)
+                .HasForeignKey(testopic => testopic.CashTestId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

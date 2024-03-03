@@ -45,6 +45,11 @@ namespace InternalPortal.Infrastucture.Data.Context
         /// </summary>
         public DbSet<TestScore> TestsScore { get; set; }
 
+        /// <summary>
+        /// Cash tests.
+        /// </summary>
+        public DbSet<CashTest> CashTests { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder = modelBuilder ?? throw new ArgumentNullException(nameof(modelBuilder));
@@ -57,6 +62,7 @@ namespace InternalPortal.Infrastucture.Data.Context
             modelBuilder.ApplyConfiguration(new TestsAnswersConfiguration());
             modelBuilder.ApplyConfiguration(new TestConfiguration());
             modelBuilder.ApplyConfiguration(new TestsScoreConfiguration());
+            modelBuilder.ApplyConfiguration(new CashTestsConfiguration());
 
             base.OnModelCreating(modelBuilder);
         }

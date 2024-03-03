@@ -1,4 +1,6 @@
-﻿namespace InternalPortal.Infrastucture.Data.Constants
+﻿using InternalPortal.Core.Models;
+
+namespace InternalPortal.Infrastucture.Data.Constants
 {
     public static class TableConstants
     {
@@ -36,5 +38,10 @@
         /// Test score table.
         /// </summary>
         public const string TestsScore = nameof(TestsScore);
+
+        /// <summary>
+        /// Cash tests table.
+        /// </summary>
+        public const string CashTests = nameof(CashTests);
     }
 }
