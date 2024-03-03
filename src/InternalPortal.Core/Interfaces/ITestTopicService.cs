@@ -33,10 +33,10 @@ namespace InternalPortal.Core.Interfaces
         Task <List<TestTopics>> GetAllTopicsAsync();
 
         /// <summary>
-        /// Get all active Test Topics.
+        /// Get all active Test Topics by cash test.
         /// </summary>
         /// <returns>Actual test topics</returns>
-        Task<List<TestTopics>> GetActiveTopicsAsync();
+        Task<List<TestTopics>> GetActiveTopicsByCashTestAsync(int cashTestId);
 
         /// <summary>
         /// Delete TestTopic.
@@ -49,5 +49,12 @@ namespace InternalPortal.Core.Interfaces
         /// </summary>
         /// <param name="testTopic">Test topic data model</param>        
         Task ChangeStatusAsync(TestTopics testTopic);
+
+        /// <summary>
+        /// Get topics by cash test id.
+        /// </summary>
+        /// <param name="cashTestId">cash test id</param>
+        /// <returns>list of topics.</returns>
+        Task<List<TestTopics>> GetTopicsByCashTestAsync(int cashTestId);
     }
 }

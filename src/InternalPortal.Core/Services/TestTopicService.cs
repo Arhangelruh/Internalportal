@@ -75,11 +75,11 @@ namespace InternalPortal.Core.Services
             return testTopic;
         }
 
-        public async Task<List<TestTopics>> GetActiveTopicsAsync()
+        public async Task<List<TestTopics>> GetActiveTopicsByCashTestAsync(int cashTestId)
         {
             return await _repository
                 .GetAll()
-                .Where(topic=>topic.IsActual==true)
+                .Where(topic=>topic.IsActual==true && topic.CashTestId == cashTestId)
                 .AsNoTracking()
                 .ToListAsync();
         }
@@ -91,6 +91,17 @@ namespace InternalPortal.Core.Services
 
             _repository.Update(editTopic);
             await _repository.SaveChangesAsync();
+        }
+
+        public async Task<List<TestTopics>> GetTopicsByCashTestAsync(int cashTestId)
+        {
+            var gettopics = await _repository
+                .GetAll()
+                .AsNoTracking()
+                .Where(topic => topic.CashTestId == cashTestId)
+                .ToListAsync();
+
+            return gettopics;
         }
     }
 }

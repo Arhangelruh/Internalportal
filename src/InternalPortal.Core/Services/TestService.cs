@@ -1,11 +1,7 @@
 ﻿using InternalPortal.Core.Interfaces;
 using InternalPortal.Core.Models;
-using Microsoft.Extensions.Options;
-using System.Collections.Generic;
-using System;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Collections;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace InternalPortal.Core.Services
 {
@@ -39,42 +35,47 @@ namespace InternalPortal.Core.Services
         {
             ArgumentNullException.ThrowIfNull(test);
 
-            var saveTest = new Test {
-              StartTime = test.StartTime,
-              EndTime = test.EndTime,
-              ProfileId = test.ProfileId
+            var saveTest = new Test
+            {
+                StartTime = test.StartTime,
+                EndTime = test.EndTime,
+                ProfileId = test.ProfileId
             };
 
             await _repository.AddAsync(saveTest);
             await _repository.SaveChangesAsync();
 
-            foreach(var answer in test.TestsAnswers)
+            foreach (var answer in test.TestsAnswers)
             {
-                await _repositoryTestAnswers.AddAsync(new TestsAnswers { 
-                  AnswerId = answer.AnswerId,
-                  TestId  = saveTest.Id
+                await _repositoryTestAnswers.AddAsync(new TestsAnswers
+                {
+                    AnswerId = answer.AnswerId,
+                    TestId = saveTest.Id
                 });
                 await _repositoryTestAnswers.SaveChangesAsync();
             }
         }
 
-        public async Task<TestDto> BuildTestAsync()
-        {                        
-            var topics = await _testTopicService.GetActiveTopicsAsync();
-            
+        public async Task<TestDto> BuildTestAsync(int cashTestId)
+        {
+            var topics = await _testTopicService.GetActiveTopicsByCashTestAsync(cashTestId);
+
             var questions = await GetQuestionListAsync(topics);
             var answers = await GetAnswersAsync(questions);
 
-            return new TestDto { 
-              Questions = questions,
-              Answers = answers
+            return new TestDto
+            {
+                Questions = questions,
+                Answers = answers
             };
         }
 
-        private async Task<TestQuestions> GetRandomQuestionAsync(TestTopics topic) {
+        private TestQuestions GetRandomQuestionAsync(TestTopics topic, List<TestQuestions> allQuestions)
+        {
             var random = new Random();
 
-            var questions = await _testQuestionService.GetActualQuestionByTopicAsync(topic.Id);
+            var questions = allQuestions.Where(q => q.TestTopicId == topic.Id).ToList();
+
             if (questions.Count != 0)
             {
                 int index = random.Next(questions.Count);
@@ -87,80 +88,91 @@ namespace InternalPortal.Core.Services
         {
             List<TestQuestions> questions = [];
             var random = new Random();
-           
-            if (topics.Count != 0)
+
+            List<TestTopics> testTopicClear = [];
+            List<TestQuestions> allQuestions = [];
+
+            foreach (var topic in topics)
             {
-                if (topics.Count < _configurationTest.Questions)
+                var getActualQuestions = await _testQuestionService.GetActualQuestionByTopicAsync(topic.Id);
+                if (getActualQuestions.Count != 0)
                 {
-                    foreach (var topic in topics)
+                    testTopicClear.Add(topic);
+                    foreach (var getActualQuestion in getActualQuestions)
                     {
-                        var question = await GetRandomQuestionAsync(topic);
+                        allQuestions.Add(getActualQuestion);
+                    }
+                }
+            }
+
+            if (testTopicClear.Count != 0)
+            {
+                if (testTopicClear.Count < _configurationTest.Questions)
+                {
+                    foreach (var actualTopic in testTopicClear)
+                    {
+                        var question = GetRandomQuestionAsync(actualTopic, allQuestions);
                         if (question != null)
                         {
                             questions.Add(question);
                         }
                     }
 
-                    for (int i = questions.Count; i <= _configurationTest.Questions; i++)
+                    if (allQuestions.Count > _configurationTest.Questions)
                     {
-                        var randomindex = random.Next(topics.Count);
-                        var randomQuestion = await GetRandomQuestionAsync(topics[randomindex]);
-                        if (randomQuestion != null && !questions.Contains(randomQuestion))
+
+                        for (int i = questions.Count; i < _configurationTest.Questions;)
                         {
-                            questions.Add(randomQuestion);
+                            var randomindex = random.Next(topics.Count);
+                            var randomQuestion = GetRandomQuestionAsync(topics[randomindex], allQuestions);
+                            if (randomQuestion != null && !questions.Contains(randomQuestion))
+                            {
+                                questions.Add(randomQuestion);
+                                i++;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (var question in allQuestions)
+                        {
+                            if (!questions.Contains(question))
+                            {
+                                questions.Add(question);
+                            }
                         }
                     }
                 }
                 else
                 {
-                    var tempListTopics = topics;
-                    for (int i = 0; i <= _configurationTest.Questions; i++)
+                    var tempListTopics = testTopicClear;
+                    for (int i = 1; i <= _configurationTest.Questions;)
                     {
                         var randomindex = random.Next(tempListTopics.Count);
-                        var randomQuestion = await GetRandomQuestionAsync(tempListTopics[randomindex]);
+                        var randomQuestion = GetRandomQuestionAsync(tempListTopics[randomindex], allQuestions);
                         if (randomQuestion != null)
                         {
                             questions.Add(randomQuestion);
+                            i++;
                         }
                         tempListTopics.Remove(tempListTopics[randomindex]);
-                    }
-
-                    if (questions.Count < _configurationTest.Questions)
-                    {
-                        for (int i = questions.Count; i <= _configurationTest.Questions; i++)
-                        {
-                            var randomindex = random.Next(topics.Count);
-                            var randomQuestion = await GetRandomQuestionAsync(topics[randomindex]);
-                            if (randomQuestion != null && !questions.Contains(randomQuestion))
-                            {
-                                questions.Add(randomQuestion);
-                            }
-                        }
                     }
                 }
             }
 
             RandomList<TestQuestions> randomList = new RandomList<TestQuestions>();
             randomList.Randomizer(questions);
-
-            //TODO clean 
-            //for (int i = 0; i < questions.Count; i++)
-            //{                
-            //    int j = random.Next(i, questions.Count);
-            //    var temp = questions[i];
-            //    questions[i] = questions[j];
-            //    questions[j] = temp;
-            //}
             return questions;
         }
 
-        private async Task<List<TestQuestionAnswers>> GetAnswersAsync(List<TestQuestions> questions) {
-            List<TestQuestionAnswers> answers = [];            
+        private async Task<List<TestQuestionAnswers>> GetAnswersAsync(List<TestQuestions> questions)
+        {
+            List<TestQuestionAnswers> answers = [];
 
             foreach (var question in questions)
             {
                 var questionAnswers = await _testAnswerService.GetAnswersByQuestionAsync(question.Id);
-                if(questionAnswers != null)
+                if (questionAnswers != null)
                 {
                     foreach (var answer in questionAnswers)
                     {
@@ -171,22 +183,27 @@ namespace InternalPortal.Core.Services
 
             RandomList<TestQuestionAnswers> randomList = new RandomList<TestQuestionAnswers>();
             randomList.Randomizer(answers);
-
-            //TODO clean 
-            //for (int i = 0; i < answers.Count; i++)
-            //{
-            //    int j = random.Next(i, answers.Count);
-            //    var temp = answers[i];
-            //    answers[i] = answers[j];
-            //    answers[j] = temp;
-            //}
             return answers;
-        }      
-    }    
+        }
+
+        public async Task<List<Test>> GetTestsAsync()
+        {
+            return await _repository.GetAll().AsNoTracking().ToListAsync();
+        }
+
+        public async Task<List<TestsAnswers>> GetQuestionAnswersAsync(int testId)
+        {
+            return await _repositoryTestAnswers
+                .GetAll()
+                .AsNoTracking()
+                .Where(testanswer => testanswer.TestId == testId)
+                .ToListAsync();
+        }
+    }
 
     public class RandomList<T>
     {
-        public List<T> Randomizer (List<T> input)
+        public List<T> Randomizer(List<T> input)
         {
             var random = new Random();
 

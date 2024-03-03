@@ -30,5 +30,17 @@ namespace InternalPortal.Core.Interfaces
         /// <param name="profileId">profile id</param>
         /// <returns>Test score model</returns>
         Task<TestScore> GetScoreByProfileIdAsync(int profoleId);
+
+        /// <summary>
+        /// Delete score.
+        /// </summary>
+        /// <param name="profileId">profile id</param>        
+        Task DeleteScoreAsync(int profileId);
+
+        /// <summary>
+        /// Get all scores.
+        /// </summary>
+        /// <returns>list scores</returns>
+        Task<List<TestScore>> GetScoresAsync();
     }
 }

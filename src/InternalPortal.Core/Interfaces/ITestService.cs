@@ -11,7 +11,25 @@ namespace InternalPortal.Core.Interfaces
         /// Add test.
         /// </summary>
         /// <param name="test">test model</param>
-
         Task AddAsync(Test test);
+
+        /// <summary>
+        /// Build test.
+        /// </summary>
+        /// <returns>Test model</returns>
+        Task<TestDto> BuildTestAsync(int cashTestId);
+
+        /// <summary>
+        /// Get tests.
+        /// </summary>
+        /// <returns>Test Lists</returns>
+        Task<List<Test>> GetTestsAsync();
+
+        /// <summary>
+        /// Get test answers.
+        /// </summary>
+        /// <param name="testId"></param>
+        /// <returns></returns>
+        Task<List<TestsAnswers>> GetQuestionAnswersAsync(int testId);
     }
 }

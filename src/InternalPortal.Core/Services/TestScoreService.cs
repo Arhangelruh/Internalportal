@@ -1,5 +1,6 @@
 ﻿using InternalPortal.Core.Interfaces;
 using InternalPortal.Core.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace InternalPortal.Core.Services
 {
@@ -37,6 +38,20 @@ namespace InternalPortal.Core.Services
         public async Task<TestScore> GetScoreByProfileIdAsync(int profoleId)
         {
             return await _repository.GetEntityAsync(score => score.ProfileId.Equals(profoleId));
+        }
+
+        public async Task DeleteScoreAsync(int profileId) {
+            var getScore = await _repository.GetEntityAsync(score => score.ProfileId == profileId);
+                        
+            if (getScore != null)
+            {
+                _repository.Delete(getScore);
+                await _repository.SaveChangesAsync();
+            }
+        }
+
+        public async Task<List<TestScore>> GetScoresAsync() {
+            return await _repository.GetAll().AsNoTracking().ToListAsync();
         }
     }
 }
