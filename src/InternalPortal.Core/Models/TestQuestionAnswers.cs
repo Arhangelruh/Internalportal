@@ -21,6 +21,11 @@
         public bool Meaning { get; set; }
 
         /// <summary>
+        /// Is Actual answer or no.
+        /// </summary>
+        public bool IsActual { get; set; }
+
+        /// <summary>
         /// Question identifier.
         /// </summary>
         public int TestQuestionId { get; set; }

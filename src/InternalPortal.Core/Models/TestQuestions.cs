@@ -21,6 +21,11 @@
         public int TestTopicId { get; set; }
 
         /// <summary>
+        /// Is Actual question or no.
+        /// </summary>
+        public bool IsActual { get; set; }
+
+        /// <summary>
         /// Navigation to TestTopics.
         /// </summary>
         public TestTopics TestTopic { get; set; }

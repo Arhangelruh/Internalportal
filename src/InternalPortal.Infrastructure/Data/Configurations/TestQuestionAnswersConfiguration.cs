@@ -25,6 +25,9 @@ namespace InternalPortal.Infrastucture.Data.Configurations
             builder.Property(answer => answer.Meaning)
                 .IsRequired();
 
+            builder.Property(answer => answer.IsActual)
+                .IsRequired();
+
             builder.HasOne(testquestion => testquestion.TestQuestion)
                 .WithMany(testanswer => testanswer.TestAnswers)
                 .HasForeignKey(testquestion => testquestion.TestQuestionId)

@@ -21,16 +21,6 @@
         public DateTime EndTime { get; set; }
 
         /// <summary>
-        /// Topic identifier.
-        /// </summary>
-        public int TestTopicId { get; set; }
-
-        /// <summary>
-        /// Navigation to TestTopic.
-        /// </summary>
-        public TestTopics TestTopic { get; set; }
-
-        /// <summary>
         /// Navigation to Tests Answers.
         /// </summary>
         public ICollection<TestsAnswers> TestsAnswers { get; set; }

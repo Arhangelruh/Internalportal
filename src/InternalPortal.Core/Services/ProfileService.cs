@@ -15,31 +15,39 @@ namespace InternalPortal.Core.Services
 
         public async Task AddAsync(Profile profile)
         {
-            if (profile is null)
-            {
-                throw new ArgumentNullException(nameof(profile));
-            }
-            
+            ArgumentNullException.ThrowIfNull(profile);
+
             await _repository.AddAsync(profile);
             await _repository.SaveChangesAsync();
         }
 
-        public Task EditAsync(Profile profile)
+        public async Task EditAsync(Profile profile)
         {
-            throw new NotImplementedException();
+            ArgumentNullException.ThrowIfNull(profile);
+
+            var editProfile = await _repository.GetEntityAsync(q => q.Id.Equals(profile.Id));
+            editProfile.Name = profile.Name;
+            editProfile.MiddleName = profile.MiddleName;
+            editProfile.LastName = profile.LastName;
+            _repository.Update(editProfile);
+            await _repository.SaveChangesAsync();
         }
 
-        public Task<Profile> GetProfileByIdAsync(int profileId)
+        public async Task<Profile> GetProfileByIdAsync(int profileId)
         {
-            throw new NotImplementedException();
+            var profile = await _repository.GetEntityAsync(transactionModel => transactionModel.Id == profileId);
+
+            if (profile is null)
+            {
+                return new Profile();
+            }
+          
+            return profile;
         }
 
         public async Task<Profile> GetProfileByUserSIDAsync(string userSID)
         {
-            if (userSID is null)
-            {
-                throw new ArgumentNullException(nameof(userSID));
-            }
+            ArgumentNullException.ThrowIfNull(userSID);
 
             var profile = await _repository.GetEntityAsync(profile => profile.UserSid == userSID);
 

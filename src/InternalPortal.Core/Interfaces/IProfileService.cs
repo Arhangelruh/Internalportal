@@ -2,6 +2,9 @@
 
 namespace InternalPortal.Core.Interfaces
 {
+    /// <summary>
+    /// Service for working with profile data.
+    /// </summary>
     public interface IProfileService
     {
         /// <summary>

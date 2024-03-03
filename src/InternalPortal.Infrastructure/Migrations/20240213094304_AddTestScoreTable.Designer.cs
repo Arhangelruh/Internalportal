@@ -3,6 +3,7 @@ using System;
 using InternalPortal.Infrastucture.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace InternalPortal.Infrastucture.Migrations
 {
     [DbContext(typeof(InternalPortalContext))]
-    partial class InternalPortalContextModelSnapshot : ModelSnapshot
+    [Migration("20240213094304_AddTestScoreTable")]
+    partial class AddTestScoreTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,27 +24,6 @@ namespace InternalPortal.Infrastucture.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("InternalPortal.Core.Models.CashTest", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("IsActual")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("TestName")
-                        .IsRequired()
-                        .HasMaxLength(63)
-                        .HasColumnType("character varying(63)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("CashTests", "test");
-                });
 
             modelBuilder.Entity("InternalPortal.Core.Models.Profile", b =>
                 {
@@ -92,9 +74,14 @@ namespace InternalPortal.Infrastucture.Migrations
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("TestTopicId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ProfileId");
+
+                    b.HasIndex("TestTopicId");
 
                     b.ToTable("Tests", "test");
                 });
@@ -184,9 +171,6 @@ namespace InternalPortal.Infrastucture.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CashTestId")
-                        .HasColumnType("integer");
-
                     b.Property<bool>("IsActual")
                         .HasColumnType("boolean");
 
@@ -196,8 +180,6 @@ namespace InternalPortal.Infrastucture.Migrations
                         .HasColumnType("character varying(500)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CashTestId");
 
                     b.ToTable("TestTopics", "test");
                 });
@@ -233,7 +215,15 @@ namespace InternalPortal.Infrastucture.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("InternalPortal.Core.Models.TestTopics", "TestTopic")
+                        .WithMany("Tests")
+                        .HasForeignKey("TestTopicId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Profile");
+
+                    b.Navigation("TestTopic");
                 });
 
             modelBuilder.Entity("InternalPortal.Core.Models.TestQuestionAnswers", b =>
@@ -269,17 +259,6 @@ namespace InternalPortal.Infrastucture.Migrations
                     b.Navigation("Profile");
                 });
 
-            modelBuilder.Entity("InternalPortal.Core.Models.TestTopics", b =>
-                {
-                    b.HasOne("InternalPortal.Core.Models.CashTest", "CashTest")
-                        .WithMany("TestTopics")
-                        .HasForeignKey("CashTestId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("CashTest");
-                });
-
             modelBuilder.Entity("InternalPortal.Core.Models.TestsAnswers", b =>
                 {
                     b.HasOne("InternalPortal.Core.Models.TestQuestionAnswers", "TestQuestionAnswer")
@@ -297,11 +276,6 @@ namespace InternalPortal.Infrastucture.Migrations
                     b.Navigation("Test");
 
                     b.Navigation("TestQuestionAnswer");
-                });
-
-            modelBuilder.Entity("InternalPortal.Core.Models.CashTest", b =>
-                {
-                    b.Navigation("TestTopics");
                 });
 
             modelBuilder.Entity("InternalPortal.Core.Models.Profile", b =>
@@ -330,6 +304,8 @@ namespace InternalPortal.Infrastucture.Migrations
             modelBuilder.Entity("InternalPortal.Core.Models.TestTopics", b =>
                 {
                     b.Navigation("TestQuestions");
+
+                    b.Navigation("Tests");
                 });
 #pragma warning restore 612, 618
         }

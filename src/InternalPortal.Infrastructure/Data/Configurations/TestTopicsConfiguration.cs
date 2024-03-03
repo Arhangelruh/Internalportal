@@ -18,9 +18,17 @@ namespace InternalPortal.Infrastucture.Data.Configurations
             builder.ToTable(TableConstants.TestTopics, SchemaConstants.Test)
                 .HasKey(topic => topic.Id);
 
+            builder.Property(topic => topic.IsActual)
+                .IsRequired();
+
             builder.Property(topic => topic.TopicName)
                 .IsRequired()
                 .HasMaxLength(ConfigurationConstants.SqlMaxLengthMedium);
+
+            builder.HasOne(cashtest => cashtest.CashTest)
+                .WithMany(testopic => testopic.TestTopics)
+                .HasForeignKey(testopic => testopic.CashTestId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

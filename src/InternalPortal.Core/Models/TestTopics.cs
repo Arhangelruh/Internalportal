@@ -16,13 +16,23 @@
         public string TopicName { get; set; }
 
         /// <summary>
+        /// Acual topic.
+        /// </summary>
+        public bool IsActual { get; set; }
+
+        /// <summary>
+        /// Test identifier.
+        /// </summary>
+        public int CashTestId { get; set; }
+
+        /// <summary>
+        /// Navigation to Cash Test.
+        /// </summary>
+        public CashTest CashTest { get; set; }
+
+        /// <summary>
         /// Navigation to questions.
         /// </summary>
         public ICollection<TestQuestions> TestQuestions { get; set; }
-
-        /// <summary>
-        /// Navigation to Tests.
-        /// </summary>
-        public ICollection<Test> Tests { get; set; }
     }
 }
