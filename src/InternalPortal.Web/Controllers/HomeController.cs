@@ -1,3 +1,4 @@
+using InternalPortal.Web.Constants;
 using InternalPortal.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +20,7 @@ namespace InternalPortal.Web.Controllers
             return View();
         }
 
-        [Authorize(Roles = "managers")]
+        [Authorize(Roles = UserConstants.ManagerRole)]
         public IActionResult Privacy()
         {
             return View();

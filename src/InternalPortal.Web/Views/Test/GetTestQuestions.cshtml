@@ -1,0 +1,38 @@
+﻿@model IEnumerable<TestQuestionViewModel>
+
+
+<div class="question-table">
+    <div class="panel-heading">
+        <div class="panel-heading-text">Вопросы</div>
+        <a class="accordionTitle accordionOtherGreen" asp-controller="Test" asp-action="AddTestQuestion" asp-route-topicId="@ViewBag.IdTopic">Создать новую запись</a>
+    </div>
+
+    @if (Model.Any())
+    {
+        <table class="table">
+            <tr>
+                <th>Вопрос</th>
+                <th>Статус</th>
+                <th>Действия</th>
+            </tr>
+            @foreach (var question in Model)
+            {
+                <tr onclick="location.href = '@Url.Action("GetAnswers", "Test", new { questionId = question.Id })'">
+                    <td>@question.QuestionText</td>
+                    <td>@question.IsActual</td>
+                    <td>
+                        <a asp-controller="Test" asp-action="EditQuestion" asp-route-questionId="@question.Id">
+                            <img title="Изменить" src="/images/Edit.svg" />
+                        </a>
+                        <a asp-controller="Test" asp-action="DeleteQuestion" asp-route-questionId="@question.Id">
+                            <img title="Удалить" src="/images/Delete.svg" />
+                        </a>
+                        <a asp-controller="Test" asp-action="ChangeQuestionStatus" asp-route-questionId="@question.Id">
+                            <img title="Заблокировать" src="/images/Unlock.svg" />
+                        </a>
+                    </td>
+                </tr>
+            }
+        </table>
+    }
+</div>

@@ -1,0 +1,23 @@
+﻿@model CashTestViewModel
+
+<div class="text_error message">
+    @Html.ValidationMessage("Error")
+</div>
+
+
+<form class="forms" method="post" asp-controller="Test" asp-action="EditCashTest">
+    <input type="hidden" asp-for="Id" />
+    <div class="formslabel">
+        <label asp-for="CashTestName">Тема</label><br />
+        <input asp-for="CashTestName" />
+        <span asp-validation-for="CashTestName" class="text_error"></span>
+    </div>
+    <div class="formslabel">
+        <label asp-for="IsActual">Актуальность</label><br />
+        <input asp-for="IsActual" />
+        <span asp-validation-for="IsActual" class="text_error"></span>
+    </div>
+    <div class="formslabel">
+        <input class="button_classic" type="submit" value="Сохранить" />
+    </div>
+</form>

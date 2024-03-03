@@ -1,0 +1,40 @@
+﻿@model IEnumerable<TestQuestionAnswerViewModel>
+
+
+<div class="question-table">
+    <div class="panel-heading">
+        <div class="panel-heading-text">Ответы</div>
+        <a class="accordionTitle accordionOtherGreen" asp-controller="Test" asp-action="AddTestAnswer" asp-route-questionId="@ViewBag.IdQuestion">Создать новую запись</a>
+    </div>
+
+    @if (Model.Any())
+    {
+        <table class="table">
+            <tr>
+                <th>Ответ</th>
+                <th>Статус</th>
+                <th>Актуальность</th>
+                <th>Действия</th>
+            </tr>
+            @foreach (var answer in Model)
+            {
+                <tr>
+                    <td>@answer.AnswerText</td>
+                    <td>@answer.Meaning</td>
+                    <td>@answer.IsActual</td>
+                    <td>
+                        <a asp-controller="Test" asp-action="EditAnswer" asp-route-answerId="@answer.Id">
+                            <img title="Изменить" src="/images/Edit.svg" />
+                        </a>
+                        <a asp-controller="Test" asp-action="DeleteAnswer" asp-route-answerId="@answer.Id">
+                            <img title="Удалить" src="/images/Delete.svg" />
+                        </a>
+                        <a asp-controller="Test" asp-action="ChangeAnswerStatus" asp-route-answerId="@answer.Id">
+                            <img title="Заблокировать" src="/images/Unlock.svg" />
+                        </a>
+                    </td>
+                </tr>
+            }
+        </table>
+    }
+</div>

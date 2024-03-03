@@ -1,0 +1,40 @@
+﻿@model IEnumerable<CashTestViewModel>
+
+<div class="cashtest-table">
+    <div class="panel-heading">
+        <div class="panel-heading-text">Тесты</div>
+        <form method="get" asp-controller="Test" asp-action="AddCashTest">
+            <button class="button_classic" type="submit" title="Создать">Создать</button>
+        </form>
+    </div>
+
+    @if (Model.Any())
+    {
+        <table class="table">
+            <tr>
+                <th>Тест</th>
+                <th>Статус</th>
+                <th>Действия</th>
+            </tr>
+            @foreach (var test in Model)
+            {
+                <tr onclick="location.href = '@Url.Action("GetTestTopics", "Test", new { cashTestId = test.Id })'">
+                    <td>@test.CashTestName</td>
+                    <td>@test.IsActual</td>
+                    <td>
+                        <a asp-controller="Test" asp-action="EditCashTest" asp-route-cashTestId="@test.Id">
+                            <img title="Изменить" src="/images/Edit.svg" />
+                        </a>
+                        <a asp-controller="Test" asp-action="DeleteCashTest" asp-route-cashTestId="@test.Id">
+                            <img title="Удалить" src="/images/Delete.svg" />
+                        </a>
+                        <a asp-controller="Test" asp-action="ChangeCashTestStatus" asp-route-cashTestId="@test.Id">
+                            <img title="Заблокировать" src="/images/Unlock.svg" />
+                        </a>
+                    </td>
+                </tr>
+            }
+        </table>
+    }
+</div>
+

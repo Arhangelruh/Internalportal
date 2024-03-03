@@ -1,0 +1,38 @@
+﻿@model IEnumerable<TestTopicViewModel>
+
+
+<div class="topic-table">
+    <div class="panel-heading">
+        <div class="panel-heading-text">Темы</div>
+        <a class="accordionTitle accordionOtherGreen" asp-controller="Test" asp-action="AddTestTopic" asp-route-cashTestId="@ViewBag.IdCashTest">Добавить тему</a>      
+    </div>
+
+    @if (Model.Any())
+    {
+        <table class="table">
+            <tr>
+                <th>Тема</th>
+                <th>Статус</th>
+                <th>Действия</th>
+            </tr>
+            @foreach (var topic in Model)
+            {
+                <tr onclick="location.href = '@Url.Action("GetTestQuestions", "Test", new { topicId = topic.Id })'">
+                    <td>@topic.TopicName</td>
+                    <td>@topic.IsActual</td>
+                    <td>
+                        <a asp-controller="Test" asp-action="EditTopic" asp-route-topicId="@topic.Id">
+                            <img title="Изменить" src="/images/Edit.svg" />
+                        </a>
+                        <a asp-controller="Test" asp-action="DeleteTopic" asp-route-topicId="@topic.Id">
+                            <img title="Удалить" src="/images/Delete.svg" />
+                        </a>
+                        <a asp-controller="Test" asp-action="ChangeTopicStatus" asp-route-topicId="@topic.Id">
+                            <img title="Заблокировать" src="/images/Unlock.svg" />
+                        </a>
+                    </td>
+                </tr>
+            }
+        </table>
+    }
+</div>

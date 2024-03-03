@@ -1,0 +1,29 @@
+﻿@model TestQuestionAnswerViewModel
+
+<div class="text_error message">
+    @Html.ValidationMessage("Error")
+</div>
+
+
+<form class="forms" method="post" asp-controller="Test" asp-action="EditAnswer">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="TestQuestionId" />
+    <div class="formslabel">
+        <label asp-for="AnswerText">Тема</label><br />
+        <input asp-for="AnswerText" />
+        <span asp-validation-for="AnswerText" class="text_error"></span>
+    </div>
+    <div class="formslabel">
+        <label asp-for="Meaning">Значение</label><br />
+        <input asp-for="Meaning" />
+        <span asp-validation-for="Meaning" class="text_error"></span>
+    </div>
+    <div class="formslabel">
+        <label asp-for="IsActual">Актуальность</label><br />
+        <input asp-for="IsActual" />
+        <span asp-validation-for="IsActual" class="text_error"></span>
+    </div>
+    <div class="formslabel">
+        <input class="button_classic" type="submit" value="Сохранить" />
+    </div>
+</form>
