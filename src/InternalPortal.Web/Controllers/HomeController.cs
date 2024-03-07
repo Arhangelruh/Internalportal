@@ -17,7 +17,11 @@ namespace InternalPortal.Web.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Info");
+            }
+            return RedirectToAction("Login","Account");
         }
 
         [Authorize(Roles = UserConstants.ManagerRole)]
@@ -30,6 +34,11 @@ namespace InternalPortal.Web.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        public IActionResult Info()
+        {
+            return View();
         }
     }
 }
