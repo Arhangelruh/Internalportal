@@ -1,0 +1,36 @@
+﻿@model TestViewModel
+
+
+<div class="text_error message">
+    @Html.ValidationMessage("Error")
+</div>
+
+
+ @if (Model.CashQuestions.Any())
+    {
+<form class="forms" method="post" asp-controller="Testing" asp-action="Test">
+    <input type="datetime" asp-for=startDate name=startDate style="display:none" />   
+        @for( int i=0; i<Model.CashQuestions.Count; i++)
+        {
+            <div class="formslabel">
+                <div class="cash_test_question">
+                    <p>@Model.CashQuestions[i].Question</p>                    
+                    <input type="hidden" asp-for="CashQuestions[i].Id"/>
+                    <input type="hidden" asp-for="CashQuestions[i].Question" />
+                </div>
+                @for (int j=0; j<Model.CashQuestions[i].Answers.Count; j++)
+                {
+                 <div class="cash_test_answers">
+                        <p>@Model.CashQuestions[i].Answers[j].Answer</p>
+                        <input type="hidden" asp-for="CashQuestions[i].Answers[j].Id" />
+                        <input type="hidden" asp-for="CashQuestions[i].Answers[j].Answer" />
+                        <input asp-for="CashQuestions[i].Answers[j].Choise" />
+                 </div>
+                }
+            </div>
+        }       
+    <div class="formslabel">
+        <input class="button_classic" type="submit" value="Отправить"/>
+    </div>
+</form>      
+}

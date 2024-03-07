@@ -1,0 +1,26 @@
+﻿@model List<TestCashQuestionViewModel>
+
+<div class="userresult">
+    <div class="panel-heading">
+        <div class="panel-heading-text">Результат</div>
+
+        @if (Model.Any())
+        {
+            foreach(var questions in Model)
+            {    
+             <div class="question_block">
+             <div class="user_result_question">
+                 @questions.Question
+             </div>
+                           @foreach(var answer in questions.Answers)
+                                {
+                                     <div class="answer">
+                                         <div class="text">@answer.Answer</div>
+                                         <div>@answer.Choise</div>
+                                     </div>      
+                               }
+                </div>
+            }
+        }
+    </div>
+</div>

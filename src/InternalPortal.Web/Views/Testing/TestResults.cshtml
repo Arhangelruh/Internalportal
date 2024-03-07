@@ -1,0 +1,27 @@
+﻿@model List<TestResultViewModel>
+
+<div class="topic-table">
+    <div class="panel-heading">
+        <div class="panel-heading-text">Тесты</div>
+        
+    @if (Model.Any())
+        {
+            <table class="table">
+                <tr>
+                    <th>Специалист</th>
+                    <th>Время начала теста</th>
+                    <th>Время завершения теста</th>
+                </tr>
+                @foreach (var test in Model)
+                {
+                    <tr onclick="location.href = '@Url.Action("UserResult", "Testing", new { testId = test.TestId })'">
+                        <td>@test.Profile.Name @test.Profile.LastName @test.Profile.MiddleName</td>
+                        <td>@test.StartDate</td>
+                        <td>@test.EndDate</td>
+                    </tr>
+                }
+            </table>
+        }
+    </div>
+    
+</div>
