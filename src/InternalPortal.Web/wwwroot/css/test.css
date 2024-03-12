@@ -1,0 +1,144 @@
+
+.manage-test{
+    display: flex;
+    margin-top: 40px;
+    justify-content: space-evenly;
+}
+
+.manage-test-button{
+    border: solid;
+    border-width: 1px;
+    border-color: black;
+    width: 260px;
+    border-radius: 40px;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+}
+
+.test-button-text{
+    display: flex;
+    justify-content: center;
+    font-size: large;
+}
+
+.tests-table{
+    width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid black;
+    border-collapse: collapse;
+    margin: auto;
+    
+}
+
+.test-table-topic{
+    background-color: darkgrey;
+    height: 20px;
+}
+
+.test-table-tests{
+    border: solid;
+    border-width: 1px;
+    border-color: black;
+}
+
+.cashtest-table, .test-table-page{
+    display: flex;
+    flex-direction: row-reverse;
+    margin-top: 40px;
+    width: 90%;
+}
+
+.button-img{
+    border: solid 1px black;
+    border-radius: 20px;
+}
+
+.text-img{
+    font-size: large;
+    font-weight: bold;
+    text-align: center;
+}
+
+.test-table{
+    width: 70%;
+    min-width: 500px;
+    border: 1px solid black;
+    border-collapse: collapse;    
+    margin: auto;
+}
+
+.test-table-header{
+    background-color: darkgray;
+    border-bottom: solid 1px;
+}
+
+.test-table-line, td,th{
+    border: solid 1px black;
+    border-collapse: collapse;
+}
+
+.test-status-column{
+    text-align: center;
+}
+
+.test-event-column{
+    text-align: center;
+    width: 150px;
+}
+
+.properties-item{
+    border: none;
+}
+
+.forms{
+    margin-left: auto;
+    margin-right: auto;        
+    margin-top: 5em;
+    width: 40em;
+    min-width: 30em;
+    border-style: solid;
+    border-width: thin;
+    border-color: darkgray;
+}
+
+.formslabel{
+    padding: 1em;
+    border: solid;
+    border-width: 1px 0px 0px 0px;
+    border-color: darkgray;
+}
+
+.formsfield{
+    width: 90%;
+    border: none;
+    height: 30px;
+    padding: 0 5% 0 5%;
+  }
+
+  .formsfield::placeholder {
+    font-weight: bold;
+    opacity: 0.5;
+    color: darkturquoise;
+    padding-left: 10px;
+  }
+
+@media (max-width: 1000px) {
+.manage-test{
+    display: flex;
+    margin-top: 40px;
+    justify-content: space-evenly;
+    flex-direction: column;
+}
+}
+
+@media (max-width: 750px) {
+    .manage-test{
+        display: flex;
+        margin-top: 40px;
+        justify-content: space-evenly;
+        flex-direction: column;
+    }
+    }

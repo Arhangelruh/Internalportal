@@ -69,7 +69,7 @@ namespace InternalPortal.Web.Controllers
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOut();
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Login", "Account");
         }
 
     }

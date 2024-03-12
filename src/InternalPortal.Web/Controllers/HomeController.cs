@@ -24,8 +24,9 @@ namespace InternalPortal.Web.Controllers
             return RedirectToAction("Login","Account");
         }
 
-        [Authorize(Roles = UserConstants.ManagerRole)]
-        public IActionResult Privacy()
+        [Authorize]
+        [HttpGet]
+        public IActionResult News()
         {
             return View();
         }
@@ -36,6 +37,8 @@ namespace InternalPortal.Web.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
+        [Authorize]
+        [HttpGet]
         public IActionResult Info()
         {
             return View();
