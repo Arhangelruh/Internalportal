@@ -93,6 +93,7 @@
     border: none;
 }
 
+/*-----------------form--------------------*/
 .forms{
     margin-left: auto;
     margin-right: auto;        
@@ -111,6 +112,15 @@
     border-color: darkgray;
 }
 
+.formslabel-checbox,
+.formslabel-button
+{
+    padding: 0.5em 1em 0.5em 1em;
+    border: solid;
+    border-width: 1px 0px 0px 0px;
+    border-color: darkgray;
+}
+
 .formsfield{
     width: 90%;
     border: none;
@@ -118,12 +128,62 @@
     padding: 0 5% 0 5%;
   }
 
-  .formsfield::placeholder {
+.formsfield::placeholder {
     font-weight: bold;
     opacity: 0.5;
     color: darkturquoise;
     padding-left: 10px;
   }
+
+.test-checkbox{
+  height: 40px;
+  position: relative;
+  background: white;
+  label {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    cursor: pointer;
+    display: flex;   
+    justify-content: center;
+    align-items: center;
+    color: darkturquoise;     
+    &:after {
+        content: '';
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        background: yellowgreen;    
+        box-shadow: inset 0px 1px 1px white, 0px 1px 3px rgba(0,0,0,0.5);
+        opacity: 0;
+      }  
+      &:hover::after {
+        opacity: 0.3;
+      }
+   } 
+   input[type=checkbox] {
+    visibility: hidden;
+    display: none;
+    &:checked + label:after {
+      opacity: 1;
+    }   
+  } 
+}
+
+.form-button{
+    width: 100%;
+    height: 40px;
+    color: darkturquoise;
+    background-color: white;
+    cursor: pointer;
+}
+
+.form-button:hover{
+    color: white;
+    background-color: yellowgreen;
+}
 
 @media (max-width: 1000px) {
 .manage-test{

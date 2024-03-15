@@ -2,12 +2,11 @@
 
 <div class="topic-table">
     <div class="panel-heading">
-        <div class="panel-heading-text">Тесты</div>
         
     @if (Model.Any())
         {
-            <table class="table">
-                <tr>
+            <table class="tasting-table">
+                <tr class="tasting-table-header">
                     <th>Специалист</th>
                     <th>Время начала теста</th>
                     <th>Время завершения теста</th>
@@ -25,3 +24,7 @@
     </div>
     
 </div>
+
+@section css {
+    <link href="~/css/testing.css" rel="stylesheet" asp-append-version="true" />
+}

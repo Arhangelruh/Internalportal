@@ -9,22 +9,19 @@
     <input type="hidden" asp-for="Id" />
     <input type="hidden" asp-for="TestQuestionId" />
     <div class="formslabel">
-        <label asp-for="AnswerText">Ответ</label><br />
+        <label asp-for="AnswerText">Текст ответа</label><br />
         <input class="formsfield" asp-for="AnswerText" />
         <span asp-validation-for="AnswerText" class="text_error"></span>
     </div>
-    <div class="formslabel">
-        <label asp-for="Meaning">Значение</label><br />
-        <input asp-for="Meaning" />
+    <div class="formslabel-checbox">
+        <div class="test-checkbox">
+        <input type="checkbox" id="squaredOne" asp-for="Meaning" />
+        <label for="squaredOne" asp-for="Meaning">Кликните здесь если ответ правильный</label><br />
         <span asp-validation-for="Meaning" class="text_error"></span>
+        </div>
     </div>
-    <div class="formslabel">
-        <label asp-for="IsActual">Актуальность</label><br />
-        <input asp-for="IsActual" />
-        <span asp-validation-for="IsActual" class="text_error"></span>
-    </div>
-    <div class="formslabel">
-        <input class="button_classic" type="submit" value="Сохранить" />
+    <div class="formslabel-button">
+        <input class="form-button" type="submit" value="Сохранить" />
     </div>
 </form>
 @section css {

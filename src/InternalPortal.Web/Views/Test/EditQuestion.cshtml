@@ -8,16 +8,15 @@
     <input type="hidden" asp-for="Id" />    
     <input type="hidden" asp-for="TestTopicId" />
     <div class="formslabel">
-        <label asp-for="QuestionText">Вопрос</label><br />
-        <input asp-for="QuestionText" />
+        <label asp-for="QuestionText">Текст вопроса</label><br />
+        <input class="formsfield" asp-for="QuestionText" />
         <span asp-validation-for="QuestionText" class="text_error"></span>
-    </div>
-    <div class="formslabel">
-        <label asp-for="IsActual">Актуальность</label><br />
-        <input asp-for="IsActual" />
-        <span asp-validation-for="IsActual" class="text_error"></span>
-    </div>
-    <div class="formslabel">
-        <input class="button_classic" type="submit" value="Сохранить" />
+    </div>    
+    <div class="formslabel-button">
+        <input class="form-button" type="submit" value="Сохранить" />
     </div>
 </form>
+
+@section css {
+    <link href="~/css/test.css" rel="stylesheet" asp-append-version="true" />
+}

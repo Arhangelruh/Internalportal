@@ -8,29 +8,39 @@
 
  @if (Model.CashQuestions.Any())
     {
-<form class="forms" method="post" asp-controller="Testing" asp-action="Test">
-    <input type="datetime" asp-for=startDate name=startDate style="display:none" />   
-        @for( int i=0; i<Model.CashQuestions.Count; i++)
-        {
-            <div class="formslabel">
-                <div class="cash_test_question">
-                    <p>@Model.CashQuestions[i].Question</p>                    
-                    <input type="hidden" asp-for="CashQuestions[i].Id"/>
-                    <input type="hidden" asp-for="CashQuestions[i].Question" />
-                </div>
-                @for (int j=0; j<Model.CashQuestions[i].Answers.Count; j++)
+        <div class="test-form">
+           <form class="forms" method="post" asp-controller="Testing" asp-action="Test">
+                <input type="datetime" asp-for=startDate name=startDate style="display:none" />   
+                @for( int i=0; i<Model.CashQuestions.Count; i++)
                 {
-                 <div class="cash_test_answers">
-                        <p>@Model.CashQuestions[i].Answers[j].Answer</p>
+                  <div class="question question--hidden">
+                      <div class="cash-test-question">
+                          <h2>@Model.CashQuestions[i].Question</h2>                    
+                          <input type="hidden" asp-for="CashQuestions[i].Id"/>
+                          <input type="hidden" asp-for="CashQuestions[i].Question" />
+                 </div>
+                
+                 @for (int j=0; j<Model.CashQuestions[i].Answers.Count; j++)
+                 {
+                   <div class="cash-test-answers">
+                        <p class="answer">@Model.CashQuestions[i].Answers[j].Answer</p>
                         <input type="hidden" asp-for="CashQuestions[i].Answers[j].Id" />
                         <input type="hidden" asp-for="CashQuestions[i].Answers[j].Answer" />
-                        <input asp-for="CashQuestions[i].Answers[j].Choise" />
-                 </div>
-                }
-            </div>
-        }       
-    <div class="formslabel">
-        <input class="button_classic" type="submit" value="Отправить"/>
-    </div>
-</form>      
+                        <input class="checkbox-answer" asp-for="CashQuestions[i].Answers[j].Choise" />
+                  </div>
+                 }
+                  </div>
+                }       
+             <div class="btn-next">Далее</div>
+                <div class="formslabel">
+                    <input class="button-classic--hidden" id="sendbutton" type="submit" value="Отправить"/>
+                </div>
+          </form>      
+        </div>
+    }
+@section css {
+    <link href="~/css/testing.css" rel="stylesheet" asp-append-version="true" />
+}
+@section js {
+    <script src="~/js/test.js" asp-append-version="true"></script>
 }

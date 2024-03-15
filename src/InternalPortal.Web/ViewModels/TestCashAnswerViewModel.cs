@@ -13,6 +13,11 @@
         public string Answer { get; set; }
 
         /// <summary>
+        /// Answer Meaning.
+        /// </summary>
+        public bool Meaning { get; set; }
+
+        /// <summary>
         /// User choise.
         /// </summary>
         public bool Choise { get; set; }

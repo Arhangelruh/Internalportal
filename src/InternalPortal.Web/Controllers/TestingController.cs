@@ -217,6 +217,7 @@ namespace InternalPortal.Web.Controllers
                     {
                         Id = answer.Id,
                         Answer = answer.AnswerText,
+                        Meaning = answer.Meaning,
                         Choise = testAnswer.AnswerStatus
                     };
 

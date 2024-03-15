@@ -5,8 +5,8 @@
 
     @if (Model.Any())
     {
-        <table class="table">
-            <tr>
+        <table class="tasting-table">
+            <tr class="tasting-table-header">
                 <th>Пользователь</th>
                 <th>Количество попыток</th>
                 <th>Действия</th>
@@ -26,3 +26,7 @@
         </table>
     }
 </div>
+
+@section css {
+    <link href="~/css/testing.css" rel="stylesheet" asp-append-version="true" />
+}

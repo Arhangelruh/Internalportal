@@ -7,12 +7,15 @@
 
 <form class="forms" method="post" asp-controller="Test" asp-action="AddTestTopic">
     <input type="hidden" asp-for="CashTestId" />
-    <div class="formslabel">
-        <label asp-for="TopicName">Тема</label><br />
-        <input asp-for="TopicName" />
+    <div class="formslabel">       
+        <input class="formsfield" asp-for="TopicName" placeholder="Введите тему." />
         <span asp-validation-for="TopicName" class="text_error"></span>
     </div>    
-    <div class="formslabel">
-        <input class="button_classic" type="submit" value="Создать" />
+    <div class="formslabel-button">
+        <input class="form-button" type="submit" value="Создать" />
     </div>
 </form>
+
+@section css {
+    <link href="~/css/test.css" rel="stylesheet" asp-append-version="true" />
+}
