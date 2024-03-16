@@ -69,7 +69,7 @@ namespace InternalPortal.Core.Services
 
             if (testTopic is null)
             {
-                return new TestTopics();
+                return null;
             }
 
             return testTopic;
