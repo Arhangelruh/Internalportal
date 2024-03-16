@@ -1,0 +1,52 @@
+﻿@model List<TestCashQuestionViewModel>
+
+<div class="userresult-wrapper">
+    <div class="panel-heading">
+        <div class="panel-heading-text">Результаты тестирования:</div>
+    </div>
+        @if (Model.Any())
+        {
+           <div class="list-results">
+            @foreach(var questions in Model)
+            {    
+             <div class="question_block">
+             <div class="user_result_question">
+                 @questions.Question
+             </div>
+                    <ul class="answer-list">
+                    @foreach(var answer in questions.Answers)
+                    {
+                             @if(answer.Meaning){
+                                <li class="good-anser">
+                                   <div class="answer">
+                                   <div class="answer-text">@answer.Answer</div>
+                                        @if (answer.Choise)
+                                        {
+                                            <img class="answer-img" src="~/images/Choise.svg" />
+                                        }                                        
+                                   </div>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="bad-anser">
+                                    <div class="answer">
+                                        <div class="answer-text">@answer.Answer</div>
+                                        @if (answer.Choise)
+                                        {
+                                            <img class="answer-img" src="~/images/Choise.svg" />
+                                        }
+                                    </div>
+                                </li>
+                            }
+                    }
+                    </ul>
+                </div>
+            }
+            </div>
+        }    
+</div>
+
+@section css {
+    <link href="~/css/testing.css" rel="stylesheet" asp-append-version="true" />
+}

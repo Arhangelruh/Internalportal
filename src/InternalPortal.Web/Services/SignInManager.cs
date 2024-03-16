@@ -1,6 +1,7 @@
 ﻿using InternalPortal.Core.Interfaces;
 using InternalPortal.Core.Models;
 using InternalPortal.Infrastructure.LDAP.Interfaces;
+using InternalPortal.Web.Constants;
 using InternalPortal.Web.Interfaces;
 using InternalPortal.Web.Models;
 using Microsoft.AspNetCore.Authentication;
@@ -53,7 +54,7 @@ namespace InternalPortal.Web.Services
 
                 foreach (var group in user.memberOf) {
                  if(group.Contains(_configurationAD.Managers.ToLower()))
-                        claims.Add(new Claim(ClaimTypes.Role, "managers"));
+                        claims.Add(new Claim(ClaimTypes.Role, UserConstants.ManagerRole));
                 }
 
                 var identity = new ClaimsIdentity(

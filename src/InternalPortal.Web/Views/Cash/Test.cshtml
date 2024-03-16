@@ -1,0 +1,49 @@
+﻿@using InternalPortal.Web.Constants
+@model IEnumerable<CashTestViewModel>
+
+    <div class="test-wrapper">
+@if (User.IsInRole(UserConstants.ManagerRole))
+{
+    <div class="manage-test">
+            <a class="nostyle-link" asp-controller="Test" asp-action="GetCashTests">
+                <div class="manage-test-button">                    
+                    <img src="../images/Write.svg" alt="Создать тест">
+                    <div class="test-button-text">Работа с тестами</div>
+                </div>                
+    </a>
+            <a class="nostyle-link" asp-controller="Testing" asp-action="TestResults">
+                <div class="manage-test-button">
+                    <img src="../images/Result.svg" alt="Результаты тестирования">
+                    <div class="test-button-text">Результаты тестирования</div>
+                </div>                
+    </a>
+            <a class="nostyle-link" asp-controller="Testing" asp-action="GetUserScores">
+                <div class="manage-test-button">
+                    <img src="../images/Time Square.svg" alt="Счетчик тестов">
+                    <div class="test-button-text">Счетчик тестов</div>
+                </div>
+    </a>
+    </div>
+}
+
+@if (Model.Any())
+{    
+     <table class="tests-table">
+            <tr><th class="test-table-topic">Варианты тестов для прохождения</th></tr>
+            @foreach (var cashTest in Model)
+    {
+                <tr >
+					<td class ="test-table-tests">
+                        <a class="nostyle-link" asp-controller="Testing" asp-action="Test" asp-route-cashTestId="@cashTest.Id">
+            <p>@cashTest.CashTestName</p>
+        </a>
+                    </td>
+                </tr>
+            }
+    </table>
+}
+
+</div>
+@section css {
+    <link href="~/css/test.css" rel="stylesheet" asp-append-version="true" />
+}

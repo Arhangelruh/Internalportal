@@ -50,7 +50,8 @@ namespace InternalPortal.Core.Services
                 await _repositoryTestAnswers.AddAsync(new TestsAnswers
                 {
                     AnswerId = answer.AnswerId,
-                    TestId = saveTest.Id
+                    TestId = saveTest.Id,
+                    AnswerStatus = answer.AnswerStatus
                 });
                 await _repositoryTestAnswers.SaveChangesAsync();
             }

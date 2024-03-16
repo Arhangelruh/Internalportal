@@ -3,51 +3,71 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - InternalPortal.Web</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/InternalPortal.Web.styles.css" asp-append-version="true" />
+    <title>@ViewBag.Title</title>    
+    <link href="~/css/site.css" rel="stylesheet" asp-append-version="true" />    
+    @RenderSection("css", false)
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="site-header">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">InternalPortal.Web</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                    <p class="nav navbar-text">Hello, @User.Identity?.Name!</p>
+                <div class="head-logo">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img class="nav_logo" title="Logo" src="/images/Logo.jpg" />
+                </a>                
                 </div>
+                @if (User.Identity.IsAuthenticated)
+                {
+                <div class="navbar">
+                    <ul class="navbar-nav">
+                            <li class="nav-item" >
+                                <button class="nav-button" id="base-knowledge-page" type="submit" title="На главную">База знаний</button>                                
+                               <ul class="sub-menu">     
+                                   <li>
+                                    <a class="nostyle-link" asp-controller="Cash" asp-action="Cash">
+                                        <div class="dropdown_departments-item">
+                                            1.Кассы
+                                        </div>
+                                    </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="nav-item">
+                                <form method="get" asp-controller="Home" asp-action="News">
+                                    <button class="nav-button" id="news-page" type="submit" title="На главную">Новости</button>
+                                </form>
+                            </li>
+                            <li class="nav-item">
+                                <form method="get" asp-controller="Home" asp-action="Info">
+                                    <button class="nav-button" id="bank-page" type="submit" title="Касса">О Банке</button>
+                                </form>
+                            </li>
+                    </ul>                                                                     
+                    <div class="nav-exit">                            
+                            <div class="nav-profile">
+                                <a class="nav-profile-img" asp-controller="Profile" asp-action="Profile"></a>
+                            </div>
+                            <form method="post" asp-controller="Account" asp-action="Logout">
+                                <button class="nav-button" id="exit-page" type="submit" title="Выход">Выйти</button>
+                            </form>
+                    </div>
+                </div>
+                }
             </div>
         </nav>
-        <form method="get" asp-controller="Account" asp-action="Login">
-           <button class="login" type="submit" title="Вход"></button>
-        </form>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+    <div class="wrapper">
+        @RenderBody()
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2024 - InternalPortal.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <footer class="footer">
+        <div class="footer-container">
+            Подвал
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+    <div class="container">
+        @RenderBody()
+    </div>
+    @RenderSection("js", false)
 </body>
 </html>

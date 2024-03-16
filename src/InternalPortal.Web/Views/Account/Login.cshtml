@@ -1,24 +1,26 @@
 ﻿@model LoginViewModel
 
+<div class="wrapper-login">
 <form class="forms" method="post" asp-controller="Account" asp-action="Login"
       asp-route-returnUrl="@Model.ReturnUrl">
-    <div>
-        <h2>Вход в приложение</h2>
+    <div class="login-form">
+            <div class="login-text"><strong></>Пройдите авторизацию</strong></div>
            <div asp-validation-summary="ModelOnly" class="text_error"></div>
              <div class="formslabel">
-               <label asp-for="UserName"></label><br />
-               <input class="formsfield" asp-for="UserName" /><br />
+            <input class="formsfield" asp-for="UserName" placeholder="Введите логин" /><br />
                <span asp-validation-for="UserName" class="text_error"></span>
              </div>
              <div class="formslabel">
-               <label asp-for="Password"></label><br />
-               <input class="formsfield" asp-for="Password" /><br />
+            <input class="formsfield" asp-for="Password" placeholder="Введите пароль" /><br />
                <span asp-validation-for="Password" class="text_error"></span>
              </div>
-             <div class="forms__bottom">
-                  <div class="formslabel login_button">
-                     <input class="button_classic login_button_width" type="submit" value="Войти" />
-                  </div>           
-           </div>
+            <div class="formslabel_button">
+                <input class="login_button" type="submit" value="ВОЙТИ" />
+            </div>
     </div>
 </form>
+</div>
+
+@section css {
+    <link href="~/css/user.css" rel="stylesheet" asp-append-version="true" />
+}

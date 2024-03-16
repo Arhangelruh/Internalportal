@@ -1,3 +1,4 @@
+using InternalPortal.Web.Constants;
 using InternalPortal.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,11 +17,16 @@ namespace InternalPortal.Web.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Info");
+            }
+            return RedirectToAction("Login","Account");
         }
 
-        [Authorize(Roles = "managers")]
-        public IActionResult Privacy()
+        [Authorize]
+        [HttpGet]
+        public IActionResult News()
         {
             return View();
         }
@@ -29,6 +35,13 @@ namespace InternalPortal.Web.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult Info()
+        {
+            return View();
         }
     }
 }

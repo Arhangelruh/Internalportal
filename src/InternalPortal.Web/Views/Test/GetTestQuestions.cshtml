@@ -1,0 +1,74 @@
+﻿@model List<TestQuestionViewModel>
+
+<div class="back-link-conteiner">
+@if (Model.Any()) {
+        <a class="back-link" asp-controller="Test" asp-action="GetTestTopics" asp-route-cashTestId="@Model[0].CashTestId">    
+            <div class="back-link-button">
+            К темам
+            </div>
+        </a>   
+}
+</div>
+
+<div class="test-table-page">
+    <div class="panel-heading">
+        <a class="nostyle-link" asp-controller="Test" asp-action="AddTestQuestion" asp-route-topicId="@ViewBag.IdTopic">
+            <div class="button-img">
+                <img src="~/images/Plus.svg" alt="Добавить вопрос">
+                <div class="text-img">Добавить</div>
+            </div>
+        </a>
+    </div>
+
+    @if (Model.Any())
+    {
+        <table class="test-table">
+            <tr class="test-table-header">
+                <th>Вопрос</th>
+                <th>Статус</th>
+                <th>Действия</th>
+            </tr>
+            @foreach (var question in Model)
+            {
+                <tr class="test-table-line">
+                    <td class="test-name-column" onclick="location.href = '@Url.Action("GetAnswers", "Test", new { questionId = question.Id, topicId = ViewBag.IdTopic, cashTestId = question.CashTestId})'">@question.QuestionText</td>
+                    <td class="test-status-column" onclick="location.href = '@Url.Action("GetAnswers", "Test", new { questionId = question.Id, topicId = ViewBag.IdTopic, cashTestId = question.CashTestId})'">
+                        @if (question.IsActual)
+                        {
+                            <p>Актуален</p>
+                        }
+                        else
+                        {
+                            <p>Неактуален</p>
+                        }
+                    </td>                    
+                    <td class="test-event-column">
+                        <a class="nostyle-link" asp-controller="Test" asp-action="EditQuestion" asp-route-questionId="@question.Id">
+                            <img title="Изменить" src="/images/Edit.svg" />
+                        </a>
+                        <a class="Delete_question nostyle-link" name="@question.Id">
+                            <img title="Удалить" src="/images/Delete.svg" />
+                        </a>                       
+                        <a class="nostyle-link" asp-controller="Test" asp-action="ChangeQuestionStatus" asp-route-questionId="@question.Id">
+                            @if (question.IsActual)
+                            {
+                                <img title="Заблокировать" src="/images/Unlock.svg" />
+                            }
+                            else
+                            {
+                                <img title="Разблокировать" src="/images/Lock.svg" />
+                            }
+                        </a>
+                    </td>
+                </tr>
+            }
+        </table>
+    }
+</div>
+
+@section css {
+    <link href="~/css/test.css" rel="stylesheet" asp-append-version="true" />
+}
+@section js {
+    <script src="~/js/deletequestion.js" asp-append-version="true"></script>
+}

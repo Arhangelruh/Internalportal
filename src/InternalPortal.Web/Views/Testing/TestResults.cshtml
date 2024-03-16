@@ -1,0 +1,30 @@
+﻿@model List<TestResultViewModel>
+
+<div class="topic-table">
+    <div class="panel-heading">
+        
+    @if (Model.Any())
+        {
+            <table class="tasting-table">
+                <tr class="tasting-table-header">
+                    <th>Специалист</th>
+                    <th>Время начала теста</th>
+                    <th>Время завершения теста</th>
+                </tr>
+                @foreach (var test in Model)
+                {
+                    <tr onclick="location.href = '@Url.Action("UserResult", "Testing", new { testId = test.TestId })'">
+                        <td>@test.Profile.Name @test.Profile.LastName @test.Profile.MiddleName</td>
+                        <td>@test.StartDate</td>
+                        <td>@test.EndDate</td>
+                    </tr>
+                }
+            </table>
+        }
+    </div>
+    
+</div>
+
+@section css {
+    <link href="~/css/testing.css" rel="stylesheet" asp-append-version="true" />
+}

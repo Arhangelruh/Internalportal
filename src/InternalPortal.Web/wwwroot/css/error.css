@@ -1,0 +1,14 @@
+.error_mesage{
+    text-align: center;
+    margin: 20px 10px 10px 5px;
+}
+
+.error_title{
+width: auto;
+color: red;
+}
+
+.error_text{
+width: auto;
+color: red;
+}

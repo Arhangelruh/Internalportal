@@ -29,5 +29,10 @@
         /// Navigation to Tests.
         /// </summary>
         public Test Test { get; set; }
+
+        /// <summary>
+        /// Answer status.
+        /// </summary>
+        public bool AnswerStatus { get; set; }
     }
 }

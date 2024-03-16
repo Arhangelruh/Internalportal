@@ -1,14 +1,15 @@
 using InternalPortal.Core.Interfaces;
+using InternalPortal.Core.Models;
 using InternalPortal.Core.Services;
 using InternalPortal.Infrastructure.LDAP.Interfaces;
 using InternalPortal.Infrastructure.LDAP.Services;
 using InternalPortal.Infrastucture.Data.Context;
 using InternalPortal.Infrastucture.Data.Repository;
+using InternalPortal.Web.Constants;
 using InternalPortal.Web.Interfaces;
 using InternalPortal.Web.Models;
 using InternalPortal.Web.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Negotiate;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
@@ -20,7 +21,6 @@ string connection = builder.Configuration.GetConnectionString("InternalPortalDat
 builder.Services.AddDbContext<InternalPortalContext>(options =>
  options.UseNpgsql(connection));
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
@@ -28,23 +28,27 @@ builder.Services.AddScoped(typeof(ILDAPUserService), typeof(LDAPUserService));
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddScoped(typeof(ISignInManager), typeof(SignInManager));
 builder.Services.AddScoped(typeof(IProfileService), typeof(ProfileService));
+builder.Services.AddScoped(typeof(ITestTopicService), typeof(TestTopicService));
+builder.Services.AddScoped(typeof(ITestQuestionService), typeof(TestQuestionService));
+builder.Services.AddScoped(typeof(ITestAnswerService), typeof(TestAnswerService));
+builder.Services.AddScoped(typeof(ITestScoreService), typeof(TestScoreService));
+builder.Services.AddScoped(typeof(ITestService), typeof(TestService));
+builder.Services.AddScoped(typeof(ICashTestService), typeof(CashTestService));
+
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
         .AddCookie(
             options =>
             {
                 options.Cookie.HttpOnly = true;
-                options.ExpireTimeSpan = TimeSpan.FromDays(11);                
+                options.ExpireTimeSpan = TimeSpan.FromDays(11);
                 options.SlidingExpiration = true;
                 options.LoginPath = "/account/login";
                 options.AccessDeniedPath = "/account/access-denied";
             }
         );
 
-//builder.Services.AddAuthorization(options =>
-//{    
-//    options.FallbackPolicy = options.DefaultPolicy;
-//});
+
 builder.Services.AddAuthorization(options =>
 {
     options.DefaultPolicy = new AuthorizationPolicyBuilder()
@@ -66,22 +70,29 @@ builder.Services.Configure<ConfigurationAD>(
         c.LDAPserver = $"{c.Subdomain}.{c.Domain}.{c.Zone}";
         c.LDAPQueryBase = $"DC={c.Domain},DC={c.Zone}";
         c.Users = new StringBuilder()
-            .Append($"CN={builder.Configuration.GetSection("AD:users").Value},")
+            .Append($"CN={builder.Configuration.GetSection($"AD:{UserConstants.ManagerRole}").Value},")
             .Append($"CN=Users,{c.LDAPQueryBase}")
             .ToString();
         c.Managers = new StringBuilder()
-            .Append($"CN={builder.Configuration.GetSection("AD:managers").Value},")            
+            .Append($"CN={builder.Configuration.GetSection($"AD:{UserConstants.ManagerRole}").Value},")
             .ToString();
     }
 );
 
+builder.Services.Configure<ConfigurationTest>(
+    c =>
+    {
+        try { c.Repeat = builder.Configuration.GetSection("Test:repeat").Get<int>(); } catch { c.Repeat = ConfigurationConstant.repeat; }
+        try { c.Questions = builder.Configuration.GetSection("Test:questions").Get<int>();} catch { c.Questions = ConfigurationConstant.questions; }
+    });
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 

@@ -213,6 +213,9 @@ namespace InternalPortal.Infrastucture.Migrations
                     b.Property<int>("AnswerId")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("AnswerStatus")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("TestId")
                         .HasColumnType("integer");
 
