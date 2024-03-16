@@ -7,6 +7,7 @@
 <form class="forms" method="post" asp-controller="Test" asp-action="EditQuestion">
     <input type="hidden" asp-for="Id" />    
     <input type="hidden" asp-for="TestTopicId" />
+    <input type="hidden" asp-for="CashTestId" />
     <div class="formslabel">
         <label asp-for="QuestionText">Текст вопроса</label><br />
         <input class="formsfield" asp-for="QuestionText" />

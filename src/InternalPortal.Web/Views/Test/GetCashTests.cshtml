@@ -1,11 +1,13 @@
 ﻿@model IEnumerable<CashTestViewModel>
 
+    <div class="back-link-conteiner"></div>
+
 <div class="cashtest-table">
     <div class="panel-heading">      
         <form method="get" asp-controller="Test" asp-action="AddCashTest">
             <button class="properties-item" type="submit" title="Создать">
                 <div class="button-img">
-                    <img src="../images/Plus.svg" alt="Статусы">
+                    <img src="~/images/Plus.svg" alt="Добавить тест">
                     <div class="text-img">Добавить тест</div>
                 </div>
             </button>            
@@ -22,9 +24,9 @@
             </tr>
             @foreach (var test in Model)
             {
-                <tr class="test-table-line" onclick="location.href = '@Url.Action("GetTestTopics", "Test", new { cashTestId = test.Id })'">
-                    <td>@test.CashTestName</td>
-                    <td class="test-status-column">
+                <tr class="test-table-line">
+                    <td class="test-name-column" onclick="location.href = '@Url.Action("GetTestTopics", "Test", new { cashTestId = test.Id })'">@test.CashTestName</td>
+                    <td class="test-status-column" onclick="location.href = '@Url.Action("GetTestTopics", "Test", new { cashTestId = test.Id })'">
                         @if (test.IsActual)
                         {
                             <p>Актуален</p>
@@ -37,8 +39,8 @@
                     <td class="test-event-column">
                         <a class="nostyle-link" asp-controller="Test" asp-action="EditCashTest" asp-route-cashTestId="@test.Id">
                             <img title="Изменить" src="/images/Edit.svg" />
-                        </a>
-                        <a class="nostyle-link" asp-controller="Test" asp-action="DeleteCashTest" asp-route-cashTestId="@test.Id">
+                        </a>                      
+                        <a class="Delete_test nostyle-link" name="@test.Id">
                             <img title="Удалить" src="/images/Delete.svg" />
                         </a>
                         <a class="nostyle-link" asp-controller="Test" asp-action="ChangeCashTestStatus" asp-route-cashTestId="@test.Id">
@@ -60,4 +62,7 @@
 
 @section css {
     <link href="~/css/test.css" rel="stylesheet" asp-append-version="true" />
+}
+@section js {
+    <script src="~/js/deletetest.js" asp-append-version="true"></script>
 }

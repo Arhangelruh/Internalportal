@@ -29,5 +29,15 @@ namespace InternalPortal.Web.ViewModels
         /// Question identifier.
         /// </summary>
         public int TestQuestionId { get; set; }
+
+        /// <summary>
+        /// Topic identifier.
+        /// </summary>
+        public int TestTopicId { get; set; }
+
+        /// <summary>
+        /// Test identifier.
+        /// </summary>
+        public int CashTestId { get; set; }
     }
 }

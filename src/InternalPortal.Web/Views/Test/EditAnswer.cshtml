@@ -8,6 +8,8 @@
 <form class="forms" method="post" asp-controller="Test" asp-action="EditAnswer">
     <input type="hidden" asp-for="Id" />
     <input type="hidden" asp-for="TestQuestionId" />
+    <input type="hidden" asp-for="CashTestId" />
+    <input type="hidden" asp-for="TestTopicId" />
     <div class="formslabel">
         <label asp-for="AnswerText">Текст ответа</label><br />
         <input class="formsfield" asp-for="AnswerText" />

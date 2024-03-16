@@ -1,9 +1,11 @@
 ﻿using InternalPortal.Core.Interfaces;
 using InternalPortal.Core.Models;
 using InternalPortal.Web.Constants;
+using InternalPortal.Web.Models;
 using InternalPortal.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.DirectoryServices.Protocols;
 
 namespace InternalPortal.Web.Controllers
 {
@@ -122,8 +124,7 @@ namespace InternalPortal.Web.Controllers
                 var model = new CashTest
                 {
                     Id = editCashTest.Id,
-                    TestName = editCashTest.CashTestName,
-                    IsActual = editCashTest.IsActual
+                    TestName = editCashTest.CashTestName,                    
                 };
 
                 await _cashTestService.EditCashTestAsync(model);
@@ -141,9 +142,9 @@ namespace InternalPortal.Web.Controllers
         /// <returns>Result</returns>
         [Authorize(Roles = UserConstants.ManagerRole)]
         [HttpGet]
-        public async Task<IActionResult> DeleteCashTest(int cashTestId)
+        public async Task<IActionResult> DeleteCashTest(int id)
         {
-            var getCashTest = await _cashTestService.GetCashTestByIdAsync(cashTestId);
+            var getCashTest = await _cashTestService.GetCashTestByIdAsync(id);
             if (getCashTest == null)
             {
                 ViewBag.ErrorMessage = "Запись не найдена";
@@ -155,12 +156,17 @@ namespace InternalPortal.Web.Controllers
                 var result = await _cashTestService.DeleteCashTestAsync(getCashTest.Id);
                 if (result)
                 {
-                    return Json("success");
+                    var response = new DeleteRequestResponse
+                    {
+                        Status = "success",                 
+                    };
+                    return Json(response);
                 }
                 else
                 {
-                    return Json("error");
-                }
+                    var response = new DeleteRequestResponse { Status = "error" };
+                    return Json(response);
+                }            
             }
         }
 
@@ -195,23 +201,33 @@ namespace InternalPortal.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> GetTestTopics(int cashTestId)
         {
-            var topics = new List<TestTopicViewModel>();
-            var getTopics = await _testTopicService.GetTopicsByCashTestAsync(cashTestId);
-            if (getTopics != null)
+            var getTest = await _cashTestService.GetCashTestByIdAsync(cashTestId);
+            if (getTest != null)
             {
-                foreach (var topic in getTopics)
+                var topics = new List<TestTopicViewModel>();
+                var getTopics = await _testTopicService.GetTopicsByCashTestAsync(cashTestId);
+                if (getTopics != null)
                 {
-                    topics.Add(new TestTopicViewModel
+                    foreach (var topic in getTopics)
                     {
-                        Id = topic.Id,
-                        TopicName = topic.TopicName,
-                        IsActual = topic.IsActual,
-                        CashTestId = cashTestId
-                    });
+                        topics.Add(new TestTopicViewModel
+                        {
+                            Id = topic.Id,
+                            TopicName = topic.TopicName,
+                            IsActual = topic.IsActual,
+                            CashTestId = cashTestId
+                        });
+                    }
                 }
+                ViewBag.IdCashTest = cashTestId;
+                return View(topics);
             }
-            ViewBag.IdCashTest = cashTestId;
-            return View(topics);
+            else
+            {
+                ViewBag.ErrorMessage = "Тест не найден";
+                ViewBag.ErrorTitle = "Ошибка";
+                return View("~/Views/Error/Error.cshtml");
+            }
         }
 
         /// <summary>
@@ -321,9 +337,9 @@ namespace InternalPortal.Web.Controllers
         /// <returns>Result</returns>
         [Authorize(Roles = UserConstants.ManagerRole)]
         [HttpGet]
-        public async Task<IActionResult> DeleteTopic(int topicId)
+        public async Task<IActionResult> DeleteTopic(int id)
         {
-            var getTopic = await _testTopicService.GetTestTopicByIdAsync(topicId);
+            var getTopic = await _testTopicService.GetTestTopicByIdAsync(id);
             if (getTopic == null)
             {
                 ViewBag.ErrorMessage = "Запись не найдена";
@@ -334,14 +350,20 @@ namespace InternalPortal.Web.Controllers
             {
                 var result = await _testTopicService.DeleteAsync(getTopic.Id);
                 if (result)
-                {
-                    return Json("success");
+                {                    
+                    var response = new DeleteRequestResponse
+                    {
+                        Status = "success",                        
+                        CashTestId = getTopic.CashTestId
+                    };
+                    return Json(response);
                 }
                 else
                 {
-                    return Json("error");
+                    var response = new DeleteRequestResponse { Status = "error" };
+                    return Json(response);
                 }
-            }
+            }                            
         }
 
         /// <summary>
@@ -373,25 +395,36 @@ namespace InternalPortal.Web.Controllers
         /// <returns></returns>
         [Authorize(Roles = UserConstants.ManagerRole)]
         [HttpGet]
-        public async Task<IActionResult> GetTestQuestions(int topicId)
+        public async Task<IActionResult> GetTestQuestions(int topicId, int cashTestId)
         {
-            var questions = new List<TestQuestionViewModel>();
-            var getQuestions = await _testQuestionService.GetQuestionByTopicAsync(topicId);
-            if (getQuestions != null)
+            var getTopic = await _testTopicService.GetTestTopicByIdAsync(topicId);
+            if (getTopic != null)
             {
-                foreach (var question in getQuestions)
+                var questions = new List<TestQuestionViewModel>();
+                var getQuestions = await _testQuestionService.GetQuestionByTopicAsync(topicId);
+                if (getQuestions != null)
                 {
-                    questions.Add(new TestQuestionViewModel
+                    foreach (var question in getQuestions)
                     {
-                        Id = question.Id,
-                        QuestionText = question.QuestionText,
-                        IsActual = question.IsActual,
-                        TestTopicId = question.TestTopicId
-                    });
+                        questions.Add(new TestQuestionViewModel
+                        {
+                            Id = question.Id,
+                            QuestionText = question.QuestionText,
+                            IsActual = question.IsActual,
+                            TestTopicId = question.TestTopicId,
+                            CashTestId = cashTestId
+                        });
+                    }
                 }
+                ViewBag.IdTopic = topicId;
+                return View(questions);
             }
-            ViewBag.IdTopic = topicId;
-            return View(questions);
+            else
+            {
+                ViewBag.ErrorMessage = "Тема не найдена";
+                ViewBag.ErrorTitle = "Ошибка";
+                return View("~/Views/Error/Error.cshtml");
+            }
         }
 
         /// <summary>
@@ -405,7 +438,7 @@ namespace InternalPortal.Web.Controllers
             var getTopic = await _testTopicService.GetTestTopicByIdAsync(topicId);
             if (getTopic != null)
             {
-                var question = new TestQuestionViewModel { TestTopicId = getTopic.Id };
+                var question = new TestQuestionViewModel { TestTopicId = getTopic.Id, CashTestId=getTopic.CashTestId };
 
                 return View(question);
             }
@@ -436,7 +469,7 @@ namespace InternalPortal.Web.Controllers
                 };
 
                 await _testQuestionService.AddAsync(question);
-                return RedirectToAction("GetTestQuestions", new { topicId = model.TestTopicId });
+                return RedirectToAction("GetTestQuestions", new { topicId = model.TestTopicId, cashTestId = model.CashTestId });
             }
 
             return View(model);
@@ -451,6 +484,7 @@ namespace InternalPortal.Web.Controllers
         public async Task<IActionResult> EditQuestion(int questionId)
         {
             var getQuestion = await _testQuestionService.GetQuestionByIdAsync(questionId);
+            var getTopic = await _testTopicService.GetTestTopicByIdAsync(getQuestion.TestTopicId);
             if (getQuestion != null)
             {
                 var question = new TestQuestionViewModel
@@ -458,7 +492,8 @@ namespace InternalPortal.Web.Controllers
                     Id = getQuestion.Id,
                     QuestionText = getQuestion.QuestionText,
                     IsActual = getQuestion.IsActual,
-                    TestTopicId = getQuestion.TestTopicId
+                    TestTopicId = getQuestion.TestTopicId,
+                    CashTestId = getTopic.CashTestId
                 };
                 return View(question);
             }
@@ -493,7 +528,7 @@ namespace InternalPortal.Web.Controllers
 
                 if (result)
                 {
-                    return RedirectToAction("GetTestQuestions", new { topicId = model.TestTopicId });
+                    return RedirectToAction("GetTestQuestions", new { topicId = editQuestion.TestTopicId, cashTestId = editQuestion.CashTestId });
                 }
                 else
                 {
@@ -514,9 +549,9 @@ namespace InternalPortal.Web.Controllers
         /// <returns>Result</returns>
         [Authorize(Roles = UserConstants.ManagerRole)]
         [HttpGet]
-        public async Task<IActionResult> DeleteQuestion(int questionId)
+        public async Task<IActionResult> DeleteQuestion(int Id)
         {
-            var getQuestion = await _testQuestionService.GetQuestionByIdAsync(questionId);
+            var getQuestion = await _testQuestionService.GetQuestionByIdAsync(Id);
             if (getQuestion == null)
             {
                 ViewBag.ErrorMessage = "Вопрос не найден.";
@@ -528,11 +563,19 @@ namespace InternalPortal.Web.Controllers
                 var result = await _testQuestionService.DeleteAsync(getQuestion.Id);
                 if (result)
                 {
-                    return Json("success");
+                        var getTopic = await _testTopicService.GetTestTopicByIdAsync(getQuestion.TestTopicId);
+                        var response = new DeleteRequestResponse
+                        {
+                            Status = "success",                        
+                            TopicId = getTopic.Id,
+                            CashTestId = getTopic.CashTestId
+                        };
+                        return Json(response);                                       
                 }
                 else
                 {
-                    return Json("error");
+                    var response = new DeleteRequestResponse { Status = "error" };
+                    return Json(response);
                 }
             }
         }
@@ -546,6 +589,7 @@ namespace InternalPortal.Web.Controllers
         public async Task<IActionResult> ChangeQuestionStatus(int questionId)
         {
             var getQuestion = await _testQuestionService.GetQuestionByIdAsync(questionId);
+            var getTopic = await _testTopicService.GetTestTopicByIdAsync(getQuestion.TestTopicId);
             if (getQuestion == null)
             {
                 ViewBag.ErrorMessage = "Запись не найдена";
@@ -556,7 +600,7 @@ namespace InternalPortal.Web.Controllers
             {
                 getQuestion.IsActual = getQuestion.IsActual == true ? false : true;
                 await _testQuestionService.ChangeStatusAsync(getQuestion);
-                return RedirectToAction("GetTestQuestions", new { topicId = getQuestion.TestTopicId });
+                return RedirectToAction("GetTestQuestions", new { topicId = getQuestion.TestTopicId, cashTestId = getTopic.CashTestId });
             }
         }
 
@@ -566,7 +610,7 @@ namespace InternalPortal.Web.Controllers
         /// <returns>Answer list</returns>
         [Authorize(Roles = UserConstants.ManagerRole)]
         [HttpGet]
-        public async Task<IActionResult> GetAnswers(int questionId)
+        public async Task<IActionResult> GetAnswers(int questionId, int topicId, int cashTestId)
         {
             var answers = new List<TestQuestionAnswerViewModel>();
             var getAnswers = await _testAnswerService.GetAnswersByQuestionAsync(questionId);
@@ -581,10 +625,13 @@ namespace InternalPortal.Web.Controllers
                         IsActual = answer.IsActual,
                         Meaning = answer.Meaning,
                         TestQuestionId = answer.TestQuestionId,
+                        CashTestId = cashTestId
                     });
                 }
             }
             ViewBag.IdQuestion = questionId;
+            ViewBag.IdTopic = topicId;
+            ViewBag.IdTest = cashTestId;
             return View(answers);
         }
 
@@ -596,10 +643,11 @@ namespace InternalPortal.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> AddTestAnswer(int questionId)
         {
-            var getQuestion = await _testQuestionService.GetQuestionByIdAsync(questionId);
+            var getQuestion = await _testQuestionService.GetQuestionByIdAsync(questionId);            
             if (getQuestion != null)
             {
-                var answer = new TestQuestionAnswerViewModel { TestQuestionId = getQuestion.Id };
+                var getTestTopic = await _testTopicService.GetTestTopicByIdAsync(getQuestion.TestTopicId);
+                var answer = new TestQuestionAnswerViewModel { TestQuestionId = getQuestion.Id, TestTopicId = getQuestion.TestTopicId, CashTestId = getTestTopic.CashTestId };
 
                 return View(answer);
             }
@@ -631,7 +679,7 @@ namespace InternalPortal.Web.Controllers
                 };
 
                 await _testAnswerService.AddAsync(answer);
-                return RedirectToAction("GetAnswers", new { questionId = model.TestQuestionId });
+                return RedirectToAction("GetAnswers", new { questionId = model.TestQuestionId, topicId = model.TestTopicId, cashTestId = model.CashTestId });
             }
             return View(model);
         }
@@ -645,6 +693,8 @@ namespace InternalPortal.Web.Controllers
         public async Task<IActionResult> EditAnswer(int answerId)
         {
             var getAnswer = await _testAnswerService.GetAnswerByIdAsync(answerId);
+            var getQuestion = await _testQuestionService.GetQuestionByIdAsync(getAnswer.TestQuestionId);
+            var getTopic = await _testTopicService.GetTestTopicByIdAsync(getQuestion.TestTopicId);
             if (getAnswer != null)
             {
                 var answer = new TestQuestionAnswerViewModel
@@ -653,7 +703,9 @@ namespace InternalPortal.Web.Controllers
                     AnswerText = getAnswer.AnswerText,
                     Meaning = getAnswer.Meaning,
                     IsActual = getAnswer.IsActual,
-                    TestQuestionId = getAnswer.TestQuestionId
+                    TestQuestionId = getAnswer.TestQuestionId,
+                    TestTopicId = getTopic.Id,
+                    CashTestId = getTopic.CashTestId
                 };
                 return View(answer);
             }
@@ -689,7 +741,7 @@ namespace InternalPortal.Web.Controllers
 
                 if (result)
                 {
-                    return RedirectToAction("GetAnswers", new { questionId = model.TestQuestionId });
+                    return RedirectToAction("GetAnswers", new { questionId = editAnswer.TestQuestionId, topicId = editAnswer.TestTopicId, cashTestId = editAnswer.CashTestId });
                 }
                 else
                 {
@@ -710,9 +762,9 @@ namespace InternalPortal.Web.Controllers
         /// <returns>Result</returns>
         [Authorize(Roles = UserConstants.ManagerRole)]
         [HttpGet]
-        public async Task<IActionResult> DeleteAnswer(int answerId)
+        public async Task<IActionResult> DeleteAnswer(int id)
         {
-            var getAnswer = await _testAnswerService.GetAnswerByIdAsync(answerId);
+            var getAnswer = await _testAnswerService.GetAnswerByIdAsync(id);
             if (getAnswer == null)
             {
                 ViewBag.ErrorMessage = "Ответ не найден.";
@@ -724,11 +776,19 @@ namespace InternalPortal.Web.Controllers
                 var result = await _testAnswerService.DeleteAsync(getAnswer.Id);
                 if (result)
                 {
-                    return Json("success");
+                    var getQuestion = await _testQuestionService.GetQuestionByIdAsync(getAnswer.TestQuestionId);
+                    var getTopic = await _testTopicService.GetTestTopicByIdAsync(getQuestion.TestTopicId);
+                    var response = new DeleteRequestResponse { 
+                        Status = "success", 
+                        QuestionId = getQuestion.Id, 
+                        TopicId = getTopic.Id, 
+                        CashTestId=getTopic.CashTestId};
+                   return Json(response);
                 }
                 else
                 {
-                    return Json("error");
+                    var response = new DeleteRequestResponse { Status = "error" };
+                    return Json(response);
                 }
             }
         }
@@ -742,6 +802,8 @@ namespace InternalPortal.Web.Controllers
         public async Task<IActionResult> ChangeAnswerStatus(int answerId)
         {
             var getAnswer = await _testAnswerService.GetAnswerByIdAsync(answerId);
+            var getQuestion = await _testQuestionService.GetQuestionByIdAsync(getAnswer.TestQuestionId);
+            var getTopic = await _testTopicService.GetTestTopicByIdAsync(getQuestion.TestTopicId);
             if (getAnswer == null)
             {
                 ViewBag.ErrorMessage = "Запись не найдена";
@@ -752,7 +814,7 @@ namespace InternalPortal.Web.Controllers
             {
                 getAnswer.IsActual = getAnswer.IsActual == true ? false : true;
                 await _testAnswerService.ChangeStatusAsync(getAnswer);
-                return RedirectToAction("GetAnswers", new { questionId = getAnswer.TestQuestionId });
+                return RedirectToAction("GetAnswers", new { questionId = getAnswer.TestQuestionId, topicId = getTopic.Id, cashTestId = getTopic.CashTestId });
             }
         }
     }

@@ -47,7 +47,6 @@
 .cashtest-table, .test-table-page{
     display: flex;
     flex-direction: row-reverse;
-    margin-top: 40px;
     width: 90%;
 }
 
@@ -64,7 +63,6 @@
 
 .test-table{
     width: 70%;
-    min-width: 500px;
     border: 1px solid black;
     border-collapse: collapse;    
     margin: auto;
@@ -80,8 +78,13 @@
     border-collapse: collapse;
 }
 
+.test-name-column{
+    cursor: pointer;
+}
+
 .test-status-column{
     text-align: center;
+    cursor: pointer;
 }
 
 .test-event-column{
@@ -91,6 +94,32 @@
 
 .properties-item{
     border: none;
+}
+
+.back-link-conteiner{
+    display: flex;
+    justify-content: center;
+    margin: 20px;
+}
+
+.back-link{
+    text-decoration: none;
+}
+
+.back-link-button{
+    border: 1px solid black;
+    width: 150px;
+    height: 30px;    
+    display: flex;
+    justify-content: center;  
+    align-items: center;
+    color: darkturquoise;
+    border-radius: 5px;
+}
+
+.back-link-button:hover{
+    background-color: yellowgreen;
+    color: white;
 }
 
 /*-----------------form--------------------*/
@@ -185,6 +214,27 @@
     background-color: yellowgreen;
 }
 
+.Delete_answer,
+.Delete_question,
+.Delete_topic,
+.Delete_test{
+    cursor: pointer;
+    position: relative;
+}
+
+.tooltiptext{
+    display: none;
+    position: absolute; 
+    left: -420px;
+    top: -20px;   
+    padding: 5px;
+    z-index: 2;
+    background-color: #000000a6;
+    color: #fff;
+    width: 410px;
+}
+
+
 @media (max-width: 1000px) {
 .manage-test{
     display: flex;
@@ -200,5 +250,10 @@
         margin-top: 40px;
         justify-content: space-evenly;
         flex-direction: column;
+    }
+
+    .tooltiptext{
+        width: 300px;
+        left: -310px;
     }
     }

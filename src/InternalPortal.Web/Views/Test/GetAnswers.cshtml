@@ -1,11 +1,20 @@
 ﻿@model IEnumerable<TestQuestionAnswerViewModel>
 
+    <div class="back-link-conteiner">
+        @if(Model.Any()){
+    <a class="back-link" asp-controller="Test" asp-action="GetTestQuestions" asp-route-topicId="@ViewBag.IdTopic" asp-route-cashTestId="@ViewBag.IdTest">
+      <div class="back-link-button">
+          К вопросам
+      </div>
+    </a>
+        }
+</div>
 
 <div class="test-table-page">
     <div class="panel-heading">        
         <a class="nostyle-link" asp-controller="Test" asp-action="AddTestAnswer" asp-route-questionId="@ViewBag.IdQuestion">
             <div class="button-img">
-                <img src="../images/Plus.svg" alt="Добавить ответ">
+                <img src="~/images/Plus.svg" alt="Добавить ответ">
                 <div class="text-img">Добавить ответ</div>
             </div>
         </a>
@@ -48,7 +57,7 @@
                         <a class="nostyle-link" asp-controller="Test" asp-action="EditAnswer" asp-route-answerId="@answer.Id">
                             <img title="Изменить" src="/images/Edit.svg" />
                         </a>
-                        <a class="nostyle-link" asp-controller="Test" asp-action="DeleteAnswer" asp-route-answerId="@answer.Id">
+                        <a class="Delete_answer nostyle-link" name="@answer.Id">
                             <img title="Удалить" src="/images/Delete.svg" />
                         </a>
                         <a class="nostyle-link" asp-controller="Test" asp-action="ChangeAnswerStatus" asp-route-answerId="@answer.Id">
@@ -70,4 +79,8 @@
 
 @section css {
     <link href="~/css/test.css" rel="stylesheet" asp-append-version="true" />
+}
+
+@section js {
+    <script src="~/js/deleteanswer.js" asp-append-version="true"></script>
 }

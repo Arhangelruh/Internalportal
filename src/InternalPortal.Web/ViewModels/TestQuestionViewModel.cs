@@ -21,6 +21,11 @@ namespace InternalPortal.Web.ViewModels
         public int TestTopicId { get; set; }
 
         /// <summary>
+        /// Test identifier.
+        /// </summary>
+        public int CashTestId { get; set; }
+
+        /// <summary>
         /// Is Actual question or no.
         /// </summary>
         public bool IsActual { get; set; }

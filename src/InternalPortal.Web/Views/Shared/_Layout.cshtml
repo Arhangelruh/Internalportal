@@ -20,16 +20,6 @@
                 {
                 <div class="navbar">
                     <ul class="navbar-nav">
-                        @* <li class="nav-item">                                
-                                <form method="get" asp-controller="Home" asp-action="Index">
-                                    <button class="nav-button" id="main-page" type="submit" title="На главную">На главную</button>
-                                </form>
-                        </li>                                                
-                            <li class="nav-item">
-                                <form method="get" asp-controller="Cash" asp-action="Cash">
-                                    <button class="nav-button" id="cash-page" type="submit" title="Касса">Касса</button>
-                                </form>                                
-                            </li> *@
                             <li class="nav-item" >
                                 <button class="nav-button" id="base-knowledge-page" type="submit" title="На главную">База знаний</button>                                
                                <ul class="sub-menu">     
@@ -52,8 +42,11 @@
                                     <button class="nav-button" id="bank-page" type="submit" title="Касса">О Банке</button>
                                 </form>
                             </li>
-                    </ul>    
-                    <div class="nav-exit">
+                    </ul>                                                                     
+                    <div class="nav-exit">                            
+                            <div class="nav-profile">
+                                <a class="nav-profile-img" asp-controller="Profile" asp-action="Profile"></a>
+                            </div>
                             <form method="post" asp-controller="Account" asp-action="Logout">
                                 <button class="nav-button" id="exit-page" type="submit" title="Выход">Выйти</button>
                             </form>

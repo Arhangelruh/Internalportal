@@ -50,13 +50,17 @@
     border: solid 1px;
 }
 
+.user_result_question{
+    font-weight: bold;
+}
+
 .answer-list{
     margin: 1em 1em 1em 3em;
 }
 
 .answer{
     display: flex;
-    height: 30px;
+    min-height: 30px;
     align-items: center;
     justify-content: space-between;
 }

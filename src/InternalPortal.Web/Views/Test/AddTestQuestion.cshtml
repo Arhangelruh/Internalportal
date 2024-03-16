@@ -6,6 +6,7 @@
 
 <form class="forms" method="post" asp-controller="Test" asp-action="AddTestQuestion">
     <input type="hidden" asp-for="TestTopicId" />
+    <input type="hidden" asp-for="CashTestId" />
     <div class="formslabel">        
         <input class="formsfield" asp-for="QuestionText" placeholder="Введите текст вопроса." />
         <span asp-validation-for="QuestionText" class="text_error"></span>

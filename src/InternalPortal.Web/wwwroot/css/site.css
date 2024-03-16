@@ -9,7 +9,7 @@ html {
   font-size: 14px;
   background: url(../images/bakground.jpg) no-repeat;
   background-size: 100% 100%;
-  min-width: 650px;
+  min-width: 700px;
 }
 
 footer{
@@ -146,7 +146,12 @@ nav > ul > li:first-child { border-left: none; }
   background: darkgray;
 }
 
-.nav-exit:hover .nav-button{
+.nav-exit{
+  display: flex;
+  align-items: center;
+}
+
+.nav-button:hover{
   cursor: pointer;
   padding: 7px 16px;
   background: yellowgreen;
@@ -157,6 +162,21 @@ nav > ul > li:first-child { border-left: none; }
   width: 150px;
   color: white;
   font-weight: bold;
+}
+
+.nav-profile{
+  height: 15px;
+  width: 15px;
+}
+
+.nav-profile-img{
+  background-image: url(/images/Profile_White.svg);
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.nav-profile-img:hover{
+  background-image: url(/images/Profile_Green.svg);
 }
 
 /*-----------------------Footer----------------------------*/
