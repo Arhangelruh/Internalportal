@@ -14,6 +14,7 @@ function nextQuestion(){
         questionList[index].classList.remove('question--hidden');
         index++;
       }else{
+        questionList[index-1].classList.add('question--hidden');
         sendButton.classList.replace('button-classic--hidden','btn-send');
         nextButton.classList.replace('btn-next','button-classic--hidden')
       }
