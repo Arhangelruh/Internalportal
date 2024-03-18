@@ -1,6 +1,7 @@
 ﻿using InternalPortal.Core.Interfaces;
 using InternalPortal.Core.Models;
 using InternalPortal.Web.Constants;
+using InternalPortal.Web.Services;
 using InternalPortal.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -163,8 +164,17 @@ namespace InternalPortal.Web.Controllers
         /// <returns>List test results</returns>
         [Authorize(Roles = UserConstants.ManagerRole)]
         [HttpGet]
-        public async Task<IActionResult> TestResults()
+        public async Task<IActionResult> TestResults(string sortOrder, int? page, int? pagesize)
         {
+            ViewData["CurrentSort"] = sortOrder;
+            ViewData["UserSortParm"] = sortOrder == "User" ? "User_desc" : "User";
+            ViewData["DateBeginSortParm"] = sortOrder == "DateBegin" ? "DateBegin_desc" : "DateBegin";
+            ViewData["DateEndSortParm"] = sortOrder == "DateEnd" ? "DateEnd_desc" : "DateEnd";
+
+
+            int pageSize = (int)(pagesize == null ? 20 : pagesize);
+            ViewData["PageSize"] = pageSize;
+
             List<TestResultViewModel> testResults = [];
             var tests = await _testService.GetTestsAsync();
 
@@ -190,7 +200,31 @@ namespace InternalPortal.Web.Controllers
                     });
                 }
             }
-            return View(testResults);
+            switch (sortOrder)
+            {
+                case "User":
+                    testResults = testResults.OrderBy(n => n.Profile.LastName).ToList();
+                    break;
+                case "User_desc":
+                    testResults = testResults.OrderByDescending(n => n.Profile.LastName).ToList();
+                    break;
+                case "DateBegin":
+                    testResults = testResults.OrderBy(d => d.StartDate).ToList();
+                    break;
+                case "DateBegin_desc":
+                    testResults = testResults.OrderByDescending(d => d.StartDate).ToList();
+                    break;
+                case "DateEnd":
+                    testResults = testResults.OrderBy(d => d.EndDate).ToList();
+                    break;
+                case "DateEnd_desc":
+                    testResults = testResults.OrderByDescending(d => d.EndDate).ToList();
+                    break;
+                default:
+                    testResults = testResults.OrderByDescending(n => n.TestId).ToList();
+                    break;
+            }
+            return View(PaginatedList<TestResultViewModel>.Create(testResults, page ?? 1, pageSize));
         }
 
         /// <summary>
