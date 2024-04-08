@@ -1,6 +1,6 @@
 ﻿namespace InternalPortal.Infrastucture.Data.Constants
 {
-    internal class ConfigurationConstants
+    public class ConfigurationConstants
     {
         /// <summary>
         /// Min lenght for string field.
