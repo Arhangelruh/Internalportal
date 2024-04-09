@@ -61,7 +61,9 @@ namespace InternalPortal.Core.Services
 
             var editCashTest = await _repository.GetEntityAsync(q => q.Id.Equals(cashTest.Id));
             editCashTest.TestName = cashTest.TestName;
-           
+            editCashTest.TestQuestions = cashTest.TestQuestions;
+            editCashTest.WrongAnswers = cashTest.WrongAnswers;
+
             _repository.Update(editCashTest);
             await _repository.SaveChangesAsync();
         }

@@ -9,10 +9,5 @@
         /// Repeat count.
         /// </summary>
         public int Repeat { get; set; } = 1;
-
-        /// <summary>
-        /// Amouth questions.
-        /// </summary>
-        public int Questions { get; set; } = 0;
     }
 }

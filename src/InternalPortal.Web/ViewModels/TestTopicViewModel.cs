@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using InternalPortal.Infrastucture.Data.Constants;
 
 namespace InternalPortal.Web.ViewModels
 {
@@ -14,7 +13,6 @@ namespace InternalPortal.Web.ViewModels
         /// Topic text.
         /// </summary>
         [Required(ErrorMessage = "Тема не может быть пустой.")]
-        [StringLength(ConfigurationConstants.SqlMaxLengthShort, MinimumLength = 1, ErrorMessage = "Тема должна содержать от {2} до {1} символов.")]
         public string TopicName { get; set; }
 
         /// <summary>

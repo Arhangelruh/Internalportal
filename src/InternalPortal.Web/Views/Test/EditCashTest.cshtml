@@ -12,6 +12,16 @@
         <input class="formsfield" asp-for="CashTestName" />
         <span asp-validation-for="CashTestName" class="text_error"></span>
     </div>
+    <div class="formslabel">
+        <label asp-for="TestQuestionsAmount">Количество вопросов в тестах</label><br />
+        <input class="formsfield" asp-for="TestQuestionsAmount" />
+        <span asp-validation-for="TestQuestionsAmount" class="text_error"></span>
+    </div>
+    <div class="formslabel">
+        <label asp-for="WrongAnswersAmount">Количество ошибочных ответов</label><br />
+        <input class="formsfield" asp-for="WrongAnswersAmount" />
+        <span asp-validation-for="WrongAnswersAmount" class="text_error"></span>
+    </div>
     <div class="formslabel-button">
         <input class="form-button" type="submit" value="Сохранить" />
     </div>
