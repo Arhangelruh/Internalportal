@@ -3,6 +3,7 @@ using System;
 using InternalPortal.Infrastucture.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace InternalPortal.Infrastucture.Migrations
 {
     [DbContext(typeof(InternalPortalContext))]
-    partial class InternalPortalContextModelSnapshot : ModelSnapshot
+    [Migration("20240409104918_ChangeCashTestModel")]
+    partial class ChangeCashTestModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

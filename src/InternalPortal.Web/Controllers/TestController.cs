@@ -49,6 +49,8 @@ namespace InternalPortal.Web.Controllers
                 var cashTest = new CashTest
                 {
                     TestName = model.CashTestName,
+                    TestQuestions = model.TestQuestionsAmount,
+                    WrongAnswers = model.WrongAnswersAmount,
                     IsActual = true
                 };
 
@@ -76,6 +78,8 @@ namespace InternalPortal.Web.Controllers
                         {
                             Id=test.Id,
                             CashTestName = test.TestName,
+                            TestQuestionsAmount = test.TestQuestions,
+                            WrongAnswersAmount = test.WrongAnswers,
                             IsActual=test.IsActual
                         });                    
                 }
@@ -97,6 +101,8 @@ namespace InternalPortal.Web.Controllers
                 var test = new CashTestViewModel {
                     Id = getCashTest.Id,
                     CashTestName = getCashTest.TestName,
+                    TestQuestionsAmount = getCashTest.TestQuestions,
+                    WrongAnswersAmount = getCashTest.WrongAnswers,
                     IsActual = getCashTest.IsActual
                 };
                 
@@ -124,7 +130,9 @@ namespace InternalPortal.Web.Controllers
                 var model = new CashTest
                 {
                     Id = editCashTest.Id,
-                    TestName = editCashTest.CashTestName,                    
+                    TestName = editCashTest.CashTestName,
+                    TestQuestions = editCashTest.TestQuestionsAmount,
+                    WrongAnswers = editCashTest.WrongAnswersAmount
                 };
 
                 await _cashTestService.EditCashTestAsync(model);

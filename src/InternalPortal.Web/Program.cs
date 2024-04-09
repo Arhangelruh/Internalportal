@@ -83,7 +83,6 @@ builder.Services.Configure<ConfigurationTest>(
     c =>
     {
         try { c.Repeat = builder.Configuration.GetSection("Test:repeat").Get<int>(); } catch { c.Repeat = ConfigurationConstant.repeat; }
-        try { c.Questions = builder.Configuration.GetSection("Test:questions").Get<int>();} catch { c.Questions = ConfigurationConstant.questions; }
     });
 
 var app = builder.Build();

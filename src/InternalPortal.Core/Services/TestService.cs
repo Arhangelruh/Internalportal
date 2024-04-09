@@ -1,7 +1,6 @@
 ﻿using InternalPortal.Core.Interfaces;
 using InternalPortal.Core.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 namespace InternalPortal.Core.Services
 {
@@ -12,7 +11,7 @@ namespace InternalPortal.Core.Services
         private readonly ITestTopicService _testTopicService;
         private readonly ITestQuestionService _testQuestionService;
         private readonly ITestAnswerService _testAnswerService;
-        private readonly ConfigurationTest _configurationTest;
+        private readonly ICashTestService _cashTestService;
 
         public TestService(
             IRepository<Test> repository,
@@ -20,7 +19,7 @@ namespace InternalPortal.Core.Services
             ITestTopicService testTopicService,
             ITestQuestionService testQuestionService,
             ITestAnswerService testAnswerService,
-            IOptions<ConfigurationTest> configurationTest
+            ICashTestService cashTestService
             )
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
@@ -28,7 +27,7 @@ namespace InternalPortal.Core.Services
             _testTopicService = testTopicService ?? throw new ArgumentNullException(nameof(testTopicService));
             _testQuestionService = testQuestionService ?? throw new ArgumentNullException(nameof(testQuestionService));
             _testAnswerService = testAnswerService ?? throw new ArgumentNullException(nameof(testAnswerService));
-            _configurationTest = configurationTest.Value ?? throw new ArgumentNullException(nameof(configurationTest.Value));
+            _cashTestService = cashTestService ?? throw new ArgumentNullException(nameof(cashTestService));
         }
 
         public async Task AddAsync(Test test)
@@ -59,9 +58,10 @@ namespace InternalPortal.Core.Services
 
         public async Task<TestDto> BuildTestAsync(int cashTestId)
         {
+            var cashTest = await _cashTestService.GetCashTestByIdAsync(cashTestId);
             var topics = await _testTopicService.GetActiveTopicsByCashTestAsync(cashTestId);
 
-            var questions = await GetQuestionListAsync(topics);
+            var questions = await GetQuestionListAsync(topics, cashTest.TestQuestions);
             var answers = await GetAnswersAsync(questions);
 
             return new TestDto
@@ -85,7 +85,7 @@ namespace InternalPortal.Core.Services
             return null;
         }
 
-        private async Task<List<TestQuestions>> GetQuestionListAsync(List<TestTopics> topics)
+        private async Task<List<TestQuestions>> GetQuestionListAsync(List<TestTopics> topics, int amounthQuestions)
         {
             List<TestQuestions> questions = [];
             var random = new Random();
@@ -108,7 +108,7 @@ namespace InternalPortal.Core.Services
 
             if (testTopicClear.Count != 0)
             {
-                if (testTopicClear.Count < _configurationTest.Questions)
+                if (testTopicClear.Count < amounthQuestions)
                 {
                     foreach (var actualTopic in testTopicClear)
                     {
@@ -119,10 +119,10 @@ namespace InternalPortal.Core.Services
                         }
                     }
 
-                    if (allQuestions.Count > _configurationTest.Questions)
+                    if (allQuestions.Count > amounthQuestions)
                     {
 
-                        for (int i = questions.Count; i < _configurationTest.Questions;)
+                        for (int i = questions.Count; i < amounthQuestions;)
                         {
                             var randomindex = random.Next(topics.Count);
                             var randomQuestion = GetRandomQuestionAsync(topics[randomindex], allQuestions);
@@ -147,7 +147,7 @@ namespace InternalPortal.Core.Services
                 else
                 {
                     var tempListTopics = testTopicClear;
-                    for (int i = 1; i <= _configurationTest.Questions;)
+                    for (int i = 1; i <= amounthQuestions;)
                     {
                         var randomindex = random.Next(tempListTopics.Count);
                         var randomQuestion = GetRandomQuestionAsync(tempListTopics[randomindex], allQuestions);

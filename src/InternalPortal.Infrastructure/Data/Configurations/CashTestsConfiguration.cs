@@ -20,6 +20,12 @@ namespace InternalPortal.Infrastructure.Data.Configurations
             builder.Property(test => test.IsActual)
                 .IsRequired();
 
+            builder.Property(test => test.TestQuestions)
+                .IsRequired();
+            
+            builder.Property(test => test.WrongAnswers)
+                .IsRequired();
+
             builder.Property(test => test.TestName)
                 .IsRequired()
                 .HasMaxLength(ConfigurationConstants.SqlMaxLengthShort);

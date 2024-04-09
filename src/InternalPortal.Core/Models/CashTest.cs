@@ -20,6 +20,15 @@
         /// </summary>
         public bool IsActual { get; set; }
 
+        /// <summary>
+        /// Amounth questions in test.
+        /// </summary>
+        public int TestQuestions { get; set; }
+
+        /// <summary>
+        /// Amounth wrong answers.
+        /// </summary>
+        public int WrongAnswers { get; set; }
 
         /// <summary>
         /// Navigation to topics.
