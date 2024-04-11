@@ -12,8 +12,9 @@
            <form class="forms" method="post" asp-controller="Testing" asp-action="Test">
                 <input type="datetime" asp-for=startDate name=startDate style="display:none" />   
                 @for( int i=0; i<Model.CashQuestions.Count; i++)
-                {                  
-                  <div class="question question--hidden">
+                {             
+                    string groupId = "group"+i;                            
+                  <div class="question question--hidden" id="@groupId">
                     <div class="question-counter">@(i+1)/@Model.CashQuestions.Count</div>
                       <div class="cash-test-question">
                           <h2>@Model.CashQuestions[i].Question</h2>                    
@@ -27,12 +28,13 @@
                         <p class="answer">@Model.CashQuestions[i].Answers[j].Answer</p>
                         <input type="hidden" asp-for="CashQuestions[i].Answers[j].Id" />
                         <input type="hidden" asp-for="CashQuestions[i].Answers[j].Answer" />
+                        
                         <input class="checkbox-answer" asp-for="CashQuestions[i].Answers[j].Choise" />
                   </div>
                  }
                   </div>
                 }       
-             <div class="btn-next">Далее</div>
+             <div class="btn-next btn--hidden">Далее</div>
                 <div class="formslabel">
                     <input class="button-classic--hidden" id="sendbutton" type="submit" value="Отправить"/>
                 </div>
