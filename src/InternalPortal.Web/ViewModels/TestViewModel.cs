@@ -10,6 +10,11 @@ namespace InternalPortal.Web.ViewModels
         public int Id { get; set; }
 
         /// <summary>
+        /// Test CashTestId.
+        /// </summary>
+        public int CashTestId { get; set; }
+
+        /// <summary>
         /// start date.
         /// </summary>
         public DateTime startDate { get; set; }

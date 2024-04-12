@@ -25,6 +25,11 @@ namespace InternalPortal.Infrastucture.Data.Configurations
                 .WithMany(tests => tests.Tests)
                 .HasForeignKey(test => test.ProfileId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(test => test.CashTest)
+                .WithMany(tests => tests.Tests)
+                .HasForeignKey(test => test.CashTestId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

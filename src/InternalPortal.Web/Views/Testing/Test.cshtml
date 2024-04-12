@@ -10,7 +10,8 @@
     {
         <div class="test-form">
            <form class="forms" method="post" asp-controller="Testing" asp-action="Test">
-                <input type="datetime" asp-for=startDate name=startDate style="display:none" />   
+                <input type="datetime" asp-for=startDate name=startDate style="display:none" />
+                <input type="hidden" asp-for=CashTestId />
                 @for( int i=0; i<Model.CashQuestions.Count; i++)
                 {             
                     string groupId = "group"+i;                            
@@ -27,8 +28,7 @@
                    <div class="cash-test-answers">
                         <p class="answer">@Model.CashQuestions[i].Answers[j].Answer</p>
                         <input type="hidden" asp-for="CashQuestions[i].Answers[j].Id" />
-                        <input type="hidden" asp-for="CashQuestions[i].Answers[j].Answer" />
-                        
+                        <input type="hidden" asp-for="CashQuestions[i].Answers[j].Answer" />                        
                         <input class="checkbox-answer" asp-for="CashQuestions[i].Answers[j].Choise" />
                   </div>
                  }

@@ -39,5 +39,15 @@
         /// Navigation to Profile.
         /// </summary>
         public Profile Profile { get; set; }
+
+        /// <summary>
+        /// Profile identifier.
+        /// </summary>
+        public int CashTestId { get; set; }
+
+        /// <summary>
+        /// Navigation to Test.
+        /// </summary>
+        public CashTest CashTest { get; set; }
     }
 }

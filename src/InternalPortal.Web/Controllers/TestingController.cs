@@ -19,6 +19,7 @@ namespace InternalPortal.Web.Controllers
         private readonly ITestScoreService _testScoreService;
         private readonly ITestAnswerService _testAnswerService;
         private readonly ITestQuestionService _testQuestionService;
+        private readonly ICashTestService _cashTestService;
 
         public TestingController(
             IOptions<ConfigurationTest> configurationTest,
@@ -26,7 +27,8 @@ namespace InternalPortal.Web.Controllers
             IProfileService profileService,
             ITestScoreService testScoreService,
             ITestAnswerService testAnswerService,
-            ITestQuestionService testQuestionService
+            ITestQuestionService testQuestionService,
+            ICashTestService cashTestService
             )
         {
             _configurationTest = configurationTest.Value ?? throw new ArgumentNullException(nameof(configurationTest));
@@ -35,6 +37,7 @@ namespace InternalPortal.Web.Controllers
             _testScoreService = testScoreService ?? throw new ArgumentNullException(nameof(testScoreService));
             _testAnswerService = testAnswerService ?? throw new ArgumentNullException(nameof(testAnswerService));
             _testQuestionService = testQuestionService ?? throw new ArgumentNullException(nameof(testQuestionService));
+            _cashTestService = cashTestService ?? throw new ArgumentNullException( nameof(cashTestService));
         }
 
 
@@ -70,6 +73,7 @@ namespace InternalPortal.Web.Controllers
                                 {
                                     Id = answer.Id,
                                     Answer = answer.AnswerText,
+                                    Meaning = answer.Meaning,
                                     Choise = false
                                 });
                             }
@@ -84,6 +88,7 @@ namespace InternalPortal.Web.Controllers
                     }
                     var testModel = new TestViewModel
                     {
+                        CashTestId = cashTestId,
                         CashQuestions = testQuestions,
                         startDate = DateTime.Now
                     };
@@ -114,21 +119,38 @@ namespace InternalPortal.Web.Controllers
                 var endDate = DateTime.UtcNow;
 
                 List<TestsAnswers> testsAnswers = [];
+                var wrongAnswers = 0;
+               
 
                 foreach (var question in model.CashQuestions)
-                {                    
+                {
                     foreach (var answer in question.Answers)
                     {
                         testsAnswers.Add(new TestsAnswers { AnswerId = answer.Id, AnswerStatus = answer.Choise });
+
+                        if (answer.Choise)
+                        {
+                            var getAnswer = await _testAnswerService.GetAnswerByIdAsync(answer.Id);
+                            if (getAnswer.Meaning != answer.Choise)
+                            {
+                                wrongAnswers++;
+                            }
+                        }
                     }
-                }
+                }              
+                
+                var getTest = await _cashTestService.GetCashTestByIdAsync(model.CashTestId);
+               
+                bool testResult = wrongAnswers <= getTest.WrongAnswers;
 
                 var test = new Test
                 {
                     StartTime = model.startDate,
                     EndTime = endDate,
                     ProfileId = profile.Id,
-                    TestsAnswers = testsAnswers
+                    TestsAnswers = testsAnswers,
+                    CashTestId = model.CashTestId,
+                    PassResult = testResult
                 };
 
                 await _testService.AddAsync(test);
@@ -148,7 +170,17 @@ namespace InternalPortal.Web.Controllers
                     };
                     await _testScoreService.EditAsync(editScore);
                 }
-                return View("FinishTest");
+                if (testResult)
+                {
+                    ViewBag.ResulMessage = $"Поздравляем тест сдан успешно, допущено ошибок: {wrongAnswers}";                    
+                    return View("FinishTest");
+                }
+                else
+                {
+                    ViewBag.ResulMessage = $"Тест не пройден, допущено ошибок: {wrongAnswers}";
+                    return View("FinishTest");
+                }
+                
             }
             return View(model);
         }

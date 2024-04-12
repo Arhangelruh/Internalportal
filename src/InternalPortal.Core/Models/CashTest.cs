@@ -34,5 +34,10 @@
         /// Navigation to topics.
         /// </summary>
         public ICollection<TestTopics> TestTopics { get; set; }
+
+        /// <summary>
+        /// Navigation to test.
+        /// </summary>
+        public ICollection<Test> Tests { get; set; }
     }
 }
