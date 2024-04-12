@@ -18,6 +18,9 @@ namespace InternalPortal.Infrastucture.Data.Configurations
             builder.ToTable(TableConstants.Tests, SchemaConstants.Test)
                 .HasKey(test => test.Id);
 
+            builder.Property(test => test.PassResult)
+                .IsRequired();
+
             builder.HasOne(test => test.Profile)
                 .WithMany(tests => tests.Tests)
                 .HasForeignKey(test => test.ProfileId)

@@ -21,6 +21,11 @@
         public DateTime EndTime { get; set; }
 
         /// <summary>
+        /// Test result.
+        /// </summary>
+        public bool PassResult { get; set; }
+
+        /// <summary>
         /// Navigation to Tests Answers.
         /// </summary>
         public ICollection<TestsAnswers> TestsAnswers { get; set; }
