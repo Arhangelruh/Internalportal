@@ -21,6 +21,11 @@
         public DateTime EndTime { get; set; }
 
         /// <summary>
+        /// Test result.
+        /// </summary>
+        public bool PassResult { get; set; }
+
+        /// <summary>
         /// Navigation to Tests Answers.
         /// </summary>
         public ICollection<TestsAnswers> TestsAnswers { get; set; }
@@ -34,5 +39,15 @@
         /// Navigation to Profile.
         /// </summary>
         public Profile Profile { get; set; }
+
+        /// <summary>
+        /// Profile identifier.
+        /// </summary>
+        public int CashTestId { get; set; }
+
+        /// <summary>
+        /// Navigation to Test.
+        /// </summary>
+        public CashTest CashTest { get; set; }
     }
 }

@@ -115,11 +115,12 @@
     min-height: 500px;
     display: flex;
     justify-content: center;
-    align-items: center;
+    margin-top: 9em;
 }
 
 .question-counter{
     display: flex;
+    justify-content: center;
 }
 
 .cash-test-question{
@@ -155,6 +156,10 @@
     justify-content: center;
     align-items: center;
     color: darkturquoise;
+}
+
+.btn--hidden{
+    display: none;
 }
 
 .btn-send

@@ -38,7 +38,9 @@ namespace InternalPortal.Core.Services
             {
                 StartTime = test.StartTime,
                 EndTime = test.EndTime,
-                ProfileId = test.ProfileId
+                ProfileId = test.ProfileId,
+                CashTestId = test.CashTestId,
+                PassResult = test.PassResult
             };
 
             await _repository.AddAsync(saveTest);

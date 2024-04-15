@@ -13,14 +13,23 @@
         public ProfileViewModel Profile { get; set; }
 
         /// <summary>
-        /// start date.
+        /// Start date.
         /// </summary>
         public DateTime StartDate { get; set; }
 
         /// <summary>
-        /// end date.
+        /// End date.
         /// </summary>
         public DateTime EndDate { get; set; }
 
+        /// <summary>
+        /// Test name.
+        /// </summary>
+        public string TestName { get; set; }
+
+        /// <summary>
+        /// Test result.
+        /// </summary>
+        public bool TestResult { get; set; }
     }
 }
