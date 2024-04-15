@@ -17,6 +17,12 @@
                     <th class="testing-table-header-column" onclick="location.href = '@Url.Action("TestResults", "Testing", new { sortOrder = ViewBag.DateEndSortParm, page = Model.PageIndex, pageSize = ViewData["PageSize"]})'">
                         Время завершения теста
                         </th>
+                    <th class="testing-table-header-column" onclick="location.href = '@Url.Action("TestResults", "Testing", new { sortOrder = ViewBag.TestNameSortParam, page = Model.PageIndex, pageSize = ViewData["PageSize"]})'">
+                        Наименование теста
+                        </th>
+                    <th class="testing-table-header-column" onclick="location.href = '@Url.Action("TestResults", "Testing", new { sortOrder = ViewBag.TestResultSortParam, page = Model.PageIndex, pageSize = ViewData["PageSize"]})'">
+                        Результат тестирования
+                    </th>
                 </tr>
                 @foreach (var test in Model)
                 {
@@ -24,6 +30,14 @@
                         <td>@test.Profile.Name @test.Profile.LastName @test.Profile.MiddleName</td>
                         <td>@test.StartDate</td>
                         <td>@test.EndDate</td>
+                        <td>@test.TestName</td>                        
+                        @if (@test.TestResult)
+                        {
+                            <td>Сдан</td>
+                        } else
+                        {
+                            <td>Не сдан</td>
+                        }                        
                     </tr>
                 }
             </table>
