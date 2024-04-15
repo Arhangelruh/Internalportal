@@ -202,6 +202,8 @@ namespace InternalPortal.Web.Controllers
             ViewData["UserSortParm"] = sortOrder == "User" ? "User_desc" : "User";
             ViewData["DateBeginSortParm"] = sortOrder == "DateBegin" ? "DateBegin_desc" : "DateBegin";
             ViewData["DateEndSortParm"] = sortOrder == "DateEnd" ? "DateEnd_desc" : "DateEnd";
+            ViewData["TestNameSortParam"] = sortOrder == "TestName" ? "TestName_desc" : "TestName";
+            ViewData["TestResultSortParam"] = sortOrder == "TestResult" ? "TestResult_desc" : "TestResult";
 
 
             int pageSize = (int)(pagesize == null ? 20 : pagesize);
@@ -223,12 +225,16 @@ namespace InternalPortal.Web.Controllers
                         Sid = profile.UserSid
                     };
 
+                    var getTest = await _cashTestService.GetCashTestByIdAsync(test.CashTestId);
+
                     testResults.Add(new TestResultViewModel
                     {
                         TestId = test.Id,
                         StartDate = test.StartTime,
                         EndDate = test.EndTime,
                         Profile = profileModel,
+                        TestName = getTest.TestName,
+                        TestResult = test.PassResult
                     });
                 }
             }
@@ -251,6 +257,18 @@ namespace InternalPortal.Web.Controllers
                     break;
                 case "DateEnd_desc":
                     testResults = testResults.OrderByDescending(d => d.EndDate).ToList();
+                    break;
+                case "TestName":
+                    testResults = testResults.OrderBy(d => d.TestName).ToList();
+                    break;
+                case "TestName_desc":
+                    testResults = testResults.OrderByDescending(d => d.TestName).ToList();
+                    break;
+                case "TestResult":
+                    testResults = testResults.OrderBy(d => d.TestResult).ToList();
+                    break;
+                case "TestResult_desc":
+                    testResults = testResults.OrderByDescending(d => d.TestResult).ToList(); 
                     break;
                 default:
                     testResults = testResults.OrderByDescending(n => n.TestId).ToList();
