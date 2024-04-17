@@ -43,5 +43,10 @@ namespace InternalPortal.Infrastucture.Data.Constants
         /// Cash tests table.
         /// </summary>
         public const string CashTests = nameof(CashTests);
+
+        /// <summary>
+        /// File table.
+        /// </summary>
+        public const string UploadFiles = nameof(UploadFiles);
     }
 }

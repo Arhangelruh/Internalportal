@@ -50,6 +50,11 @@ namespace InternalPortal.Infrastucture.Data.Context
         /// </summary>
         public DbSet<CashTest> CashTests { get; set; }
 
+        /// <summary>
+        /// UploadFile.
+        /// </summary>
+        public DbSet<UploadFile> UploadFiles { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder = modelBuilder ?? throw new ArgumentNullException(nameof(modelBuilder));
@@ -63,6 +68,7 @@ namespace InternalPortal.Infrastucture.Data.Context
             modelBuilder.ApplyConfiguration(new TestConfiguration());
             modelBuilder.ApplyConfiguration(new TestsScoreConfiguration());
             modelBuilder.ApplyConfiguration(new CashTestsConfiguration());
+            modelBuilder.ApplyConfiguration(new UploadFileConfiguration());
 
             base.OnModelCreating(modelBuilder);
         }

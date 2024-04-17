@@ -14,5 +14,10 @@
         /// DBO.
         /// </summary>
         public const string DBO = "dbo";
+
+        /// <summary>
+        /// DBO.
+        /// </summary>
+        public const string File = "file";
     }
 }
