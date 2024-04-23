@@ -12,12 +12,15 @@ using InternalPortal.Web.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
 string connection = builder.Configuration.GetConnectionString("InternalPortalDatabase");
+string filesDirectory = builder.Configuration.GetSection("FilesPath:files").Value;
+
 builder.Services.AddDbContext<InternalPortalContext>(options =>
  options.UseNpgsql(connection));
 
@@ -34,7 +37,10 @@ builder.Services.AddScoped(typeof(ITestAnswerService), typeof(TestAnswerService)
 builder.Services.AddScoped(typeof(ITestScoreService), typeof(TestScoreService));
 builder.Services.AddScoped(typeof(ITestService), typeof(TestService));
 builder.Services.AddScoped(typeof(ICashTestService), typeof(CashTestService));
+builder.Services.AddScoped(typeof(IUploadFileService), typeof(UploadFileService));
 
+var physicalProvider = new PhysicalFileProvider(filesDirectory);
+builder.Services.AddSingleton<IFileProvider>(physicalProvider);
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
         .AddCookie(
@@ -56,7 +62,18 @@ builder.Services.AddAuthorization(options =>
         .Build();
 });
 
-builder.Services.AddRazorPages();
+builder.Services.AddRazorPages(options =>
+{
+    options.Conventions
+        .AddPageApplicationModelConvention("/Education",
+            model =>
+            {
+                model.Filters.Add(
+                    new GenerateAntiforgeryTokenCookieAttribute());
+                model.Filters.Add(
+                    new DisableFormValueModelBindingAttribute());
+            });
+});
 
 builder.Services.Configure<ConfigurationAD>(
     c =>
@@ -83,6 +100,13 @@ builder.Services.Configure<ConfigurationTest>(
     c =>
     {
         try { c.Repeat = builder.Configuration.GetSection("Test:repeat").Get<int>(); } catch { c.Repeat = ConfigurationConstant.repeat; }
+    });
+
+builder.Services.Configure<ConfigurationFiles>(
+    c =>
+    {
+        c.Files = filesDirectory;
+        c.FileSizeLimit = builder.Configuration.GetSection("FilesPath:sizefile").Get<long>();
     });
 
 var app = builder.Build();
