@@ -1,6 +1,4 @@
-﻿using InternalPortal.Core.Models;
-
-namespace InternalPortal.Web.ViewModels
+﻿namespace InternalPortal.Web.ViewModels
 {
     public class TestViewModel
     {

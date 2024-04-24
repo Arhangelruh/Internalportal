@@ -1,0 +1,85 @@
+﻿@using InternalPortal.Web.Constants
+@model List<UploadFileViewModel>
+
+    @if (User.IsInRole(UserConstants.ManagerRole))
+{
+    <div class="upload-form">     
+        <form class="upload-file-form" id="uploadForm" action="/Streaming/UploadPhysical/" method="post"
+        enctype="multipart/form-data" onsubmit="AJAXSubmit(this);return false;">            
+            <input id="file" type="file" name="file" />            
+
+            <label class="choise-file" for="file">Выберите файл</label>
+            <label class="file-name file-button">Файл не выбран</label>
+
+            <div class="upload-buttons">
+                <button class="addfile-button revertfile-button file-button" type="reset" title="Отменить">
+                    <div class="addfile-button-refuse">                
+                        Отменить
+                    </div>
+                </button>
+
+                <button class="addfile-button confirmfile-button file-button" id="addmyfile" type="submit" title="Добавить">
+                    <div class="addfile-button-confirm">                
+                        Добавить
+                    </div>
+                </button>
+            </div>
+        </form>	
+    </div>
+    <div class="upload-result">
+        <output class="result" name="result"></output>
+    </div>
+}
+
+@if (Model.Any()) {
+<div class="files-block">
+    @foreach(var file in Model)
+    {
+       <div class="upload-file-field">
+           <div class="upload-file-link">
+        <a class="nostyle-link" asp-controller="Cash" asp-action="DownloadPhysical" asp-route-fileId="@file.Id">
+            <div class="upload-link-content">
+            <div class="upload-file-img">
+                    @if (file.Extension == ".doc" || file.Extension == ".docx")
+                    {
+                            <img class="upload-img" title="file" src="/images/mc-file-document.svg" />
+                    }
+                    else if (file.Extension == ".zip")
+                    {
+                            <img class="upload-img" title="file" src="/images/mc-file-pack.svg" />
+                    }
+                    else if (file.Extension == ".jpg" || file.Extension == ".jpeg" || file.Extension == ".png")
+                    {
+                            <img class="upload-img" title="file" src="/images/mc-file-image.svg" />
+                    }
+                    else if (file.Extension == ".pdf")
+                    {
+                            <img class="upload-img" title="file" src="/images/mc-file-pdf.svg" />
+                    }
+                    else
+                    {
+                            <img class="upload-img" title="file" src="/images/no-data.svg" />
+                    }
+            </div>                    
+            <div class="upload-file-name">@file.UntrastedName</div>
+                    </div>
+        </a>
+        </div>
+                @if (User.IsInRole(UserConstants.ManagerRole))
+                {
+                    <a class="delete-file nostyle-link" asp-controller="Cash" asp-action="DeletePhysical" asp-route-fileId="@file.Id">
+                        <div class="delete-file-button">                   
+                        </div>
+                    </a>
+                }
+            </div>
+    }
+</div>
+}
+
+@section css {
+    <link href="~/css/cash.css" rel="stylesheet" asp-append-version="true" />
+}
+@section js {
+    <script src="~/js/uploadfile.js" asp-append-version="true"></script>
+}
