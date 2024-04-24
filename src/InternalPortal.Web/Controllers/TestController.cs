@@ -5,7 +5,6 @@ using InternalPortal.Web.Models;
 using InternalPortal.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.DirectoryServices.Protocols;
 
 namespace InternalPortal.Web.Controllers
 {
@@ -76,12 +75,12 @@ namespace InternalPortal.Web.Controllers
                     cashTests.Add(
                         new CashTestViewModel
                         {
-                            Id=test.Id,
+                            Id = test.Id,
                             CashTestName = test.TestName,
                             TestQuestionsAmount = test.TestQuestions,
                             WrongAnswersAmount = test.WrongAnswers,
-                            IsActual=test.IsActual
-                        });                    
+                            IsActual = test.IsActual
+                        });
                 }
             }
             return View(cashTests);
@@ -98,14 +97,15 @@ namespace InternalPortal.Web.Controllers
             var getCashTest = await _cashTestService.GetCashTestByIdAsync(cashTestId);
             if (getCashTest != null)
             {
-                var test = new CashTestViewModel {
+                var test = new CashTestViewModel
+                {
                     Id = getCashTest.Id,
                     CashTestName = getCashTest.TestName,
                     TestQuestionsAmount = getCashTest.TestQuestions,
                     WrongAnswersAmount = getCashTest.WrongAnswers,
                     IsActual = getCashTest.IsActual
                 };
-                
+
                 return View(test);
             }
             else
@@ -166,7 +166,7 @@ namespace InternalPortal.Web.Controllers
                 {
                     var response = new DeleteRequestResponse
                     {
-                        Status = "success",                 
+                        Status = "success",
                     };
                     return Json(response);
                 }
@@ -174,7 +174,7 @@ namespace InternalPortal.Web.Controllers
                 {
                     var response = new DeleteRequestResponse { Status = "error" };
                     return Json(response);
-                }            
+                }
             }
         }
 
@@ -258,7 +258,7 @@ namespace InternalPortal.Web.Controllers
                 ViewBag.ErrorMessage = "Тест не найден";
                 ViewBag.ErrorTitle = "Ошибка";
                 return View("~/Views/Error/Error.cshtml");
-            }            
+            }
         }
 
         /// <summary>
@@ -276,7 +276,7 @@ namespace InternalPortal.Web.Controllers
                 {
                     TopicName = model.TopicName,
                     IsActual = true,
-                    CashTestId=model.CashTestId
+                    CashTestId = model.CashTestId
                 };
 
                 await _testTopicService.AddAsync(topic);
@@ -358,10 +358,10 @@ namespace InternalPortal.Web.Controllers
             {
                 var result = await _testTopicService.DeleteAsync(getTopic.Id);
                 if (result)
-                {                    
+                {
                     var response = new DeleteRequestResponse
                     {
-                        Status = "success",                        
+                        Status = "success",
                         CashTestId = getTopic.CashTestId
                     };
                     return Json(response);
@@ -371,7 +371,7 @@ namespace InternalPortal.Web.Controllers
                     var response = new DeleteRequestResponse { Status = "error" };
                     return Json(response);
                 }
-            }                            
+            }
         }
 
         /// <summary>
@@ -446,7 +446,7 @@ namespace InternalPortal.Web.Controllers
             var getTopic = await _testTopicService.GetTestTopicByIdAsync(topicId);
             if (getTopic != null)
             {
-                var question = new TestQuestionViewModel { TestTopicId = getTopic.Id, CashTestId=getTopic.CashTestId };
+                var question = new TestQuestionViewModel { TestTopicId = getTopic.Id, CashTestId = getTopic.CashTestId };
 
                 return View(question);
             }
@@ -571,14 +571,14 @@ namespace InternalPortal.Web.Controllers
                 var result = await _testQuestionService.DeleteAsync(getQuestion.Id);
                 if (result)
                 {
-                        var getTopic = await _testTopicService.GetTestTopicByIdAsync(getQuestion.TestTopicId);
-                        var response = new DeleteRequestResponse
-                        {
-                            Status = "success",                        
-                            TopicId = getTopic.Id,
-                            CashTestId = getTopic.CashTestId
-                        };
-                        return Json(response);                                       
+                    var getTopic = await _testTopicService.GetTestTopicByIdAsync(getQuestion.TestTopicId);
+                    var response = new DeleteRequestResponse
+                    {
+                        Status = "success",
+                        TopicId = getTopic.Id,
+                        CashTestId = getTopic.CashTestId
+                    };
+                    return Json(response);
                 }
                 else
                 {
@@ -651,7 +651,7 @@ namespace InternalPortal.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> AddTestAnswer(int questionId)
         {
-            var getQuestion = await _testQuestionService.GetQuestionByIdAsync(questionId);            
+            var getQuestion = await _testQuestionService.GetQuestionByIdAsync(questionId);
             if (getQuestion != null)
             {
                 var getTestTopic = await _testTopicService.GetTestTopicByIdAsync(getQuestion.TestTopicId);
@@ -786,12 +786,14 @@ namespace InternalPortal.Web.Controllers
                 {
                     var getQuestion = await _testQuestionService.GetQuestionByIdAsync(getAnswer.TestQuestionId);
                     var getTopic = await _testTopicService.GetTestTopicByIdAsync(getQuestion.TestTopicId);
-                    var response = new DeleteRequestResponse { 
-                        Status = "success", 
-                        QuestionId = getQuestion.Id, 
-                        TopicId = getTopic.Id, 
-                        CashTestId=getTopic.CashTestId};
-                   return Json(response);
+                    var response = new DeleteRequestResponse
+                    {
+                        Status = "success",
+                        QuestionId = getQuestion.Id,
+                        TopicId = getTopic.Id,
+                        CashTestId = getTopic.CashTestId
+                    };
+                    return Json(response);
                 }
                 else
                 {
