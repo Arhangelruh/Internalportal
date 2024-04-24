@@ -219,10 +219,16 @@ height: 50%;
 
 .files-block{
   width: 90%;
+  margin-top: 2em;
   margin-left: 5%;
   margin-right: 5%;  
   display: flex;
   flex-wrap: wrap;
+}
+
+.uploadfiles_message{
+  text-align: center;
+  margin: 5em;
 }
 
 .upload-link-content{
