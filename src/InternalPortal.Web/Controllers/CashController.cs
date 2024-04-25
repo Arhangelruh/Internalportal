@@ -85,7 +85,7 @@ namespace InternalPortal.Web.Controllers
                 var file = _fileProvider.GetFileInfo(getFileModel.TrustedName);
                 System.IO.File.Delete(file.PhysicalPath);
 
-                _uploadFileService.DeleteAsync(getFileModel.Id);
+                await _uploadFileService.DeleteAsync(getFileModel.Id);
             }
 
             return RedirectToAction("Education");
