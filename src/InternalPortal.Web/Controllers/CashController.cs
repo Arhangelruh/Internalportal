@@ -80,8 +80,13 @@ namespace InternalPortal.Web.Controllers
         public async Task<IActionResult> DeletePhysical(int fileId)
         {
             var getFileModel = await _uploadFileService.GetFileByIdAsync(fileId);
-            var file = _fileProvider.GetFileInfo(getFileModel.TrustedName);
-            System.IO.File.Delete(file.PhysicalPath);
+            if (getFileModel != null)
+            {
+                var file = _fileProvider.GetFileInfo(getFileModel.TrustedName);
+                System.IO.File.Delete(file.PhysicalPath);
+
+                _uploadFileService.DeleteAsync(getFileModel.Id);
+            }
 
             return RedirectToAction("Education");
         }
