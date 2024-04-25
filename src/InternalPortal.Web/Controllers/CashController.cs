@@ -53,14 +53,16 @@ namespace InternalPortal.Web.Controllers
             foreach (var physicalFile in physicalFiles)
             {
                 var getFileModel = await _uploadFileService.GetFileByGuidAsync(physicalFile.Name);
-                var ext = Path.GetExtension(getFileModel.UntrastedName).ToLowerInvariant();
-                uploadedFiles.Add(new UploadFileViewModel
-                {
-                    Id = getFileModel.Id,
-                    TrustedName = getFileModel.TrustedName,
-                    UntrastedName = getFileModel.UntrastedName,
-                    Extension = ext
-                });
+                if (getFileModel != null) {
+                    var ext = Path.GetExtension(getFileModel.UntrastedName).ToLowerInvariant();
+                    uploadedFiles.Add(new UploadFileViewModel
+                    {
+                        Id = getFileModel.Id,
+                        TrustedName = getFileModel.TrustedName,
+                        UntrastedName = getFileModel.UntrastedName,
+                        Extension = ext
+                    });
+                }
             }
 
             return View(uploadedFiles);
