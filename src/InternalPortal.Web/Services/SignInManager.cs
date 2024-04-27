@@ -38,49 +38,53 @@ namespace InternalPortal.Web.Services
             if (checkUser)
             {
                 var user = await _lDAPUserService.GetUserAsync(userName, _configurationAD.LDAPserver, _configurationAD.Username, _configurationAD.Password);
-
-                var checkProfileBySid = await _profileService.GetProfileByUserSIDAsync(user.Sid);
-                if (checkProfileBySid == null) {
-                    await _profileService.AddAsync(new Profile { LastName = user.Sn, Name=user.Name, UserSid= user.Sid});
-                }
-
-                var claims = new List<Claim>
+                if (user != null)
                 {
+                    var checkProfileBySid = await _profileService.GetProfileByUserSIDAsync(user.Sid);
+                    if (checkProfileBySid == null)
+                    {
+                        await _profileService.AddAsync(new Profile { LastName = user.Sn, Name = user.Name, UserSid = user.Sid });
+                    }
+
+                    var claims = new List<Claim>
+                    {
                     new Claim(ClaimTypes.WindowsAccountName, user.Login),
                     new Claim(ClaimTypes.Name, user.Name),
                     new Claim(ClaimTypes.Email, user.Mail),
                     new Claim(ClaimTypes.Sid, user.Sid)
-                };
+                    };
 
-                foreach (var group in user.memberOf) {
-                 if(group.Contains(_configurationAD.Managers.ToLower()))
-                        claims.Add(new Claim(ClaimTypes.Role, UserConstants.ManagerRole));
-                }
-
-                var identity = new ClaimsIdentity(
-            claims,
-            "LDAP", 
-            ClaimTypes.Name, 
-            ClaimTypes.Role);
-
-                var principal = new ClaimsPrincipal(identity);
-
-                if (_httpContextAccessor.HttpContext != null)
-                {
-                    try
+                    foreach (var group in user.memberOf)
                     {
-                        await _httpContextAccessor.HttpContext.SignInAsync(
-                            CookieAuthenticationDefaults.AuthenticationScheme,
-                            principal
-                        );
-                        return true;
+                        if (group.Contains(_configurationAD.Managers.ToLower()))
+                            claims.Add(new Claim(ClaimTypes.Role, UserConstants.ManagerRole));
                     }
-                    catch (Exception ex)
+
+                    var identity = new ClaimsIdentity(
+                       claims,
+                       "LDAP",
+                       ClaimTypes.Name,
+                       ClaimTypes.Role);
+
+                    var principal = new ClaimsPrincipal(identity);
+
+                    if (_httpContextAccessor.HttpContext != null)
                     {
-                        Console.WriteLine($"Signing in has failed. {ex.Message}");
+                        try
+                        {
+                            await _httpContextAccessor.HttpContext.SignInAsync(
+                                CookieAuthenticationDefaults.AuthenticationScheme,
+                                principal
+                            );
+                            return true;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Signing in has failed. {ex.Message}");
+                        }
                     }
-                }
-                return true;
+                    return true;
+                }                
             }
             return false;
         }

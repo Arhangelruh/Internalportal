@@ -30,7 +30,7 @@ namespace InternalPortal.Infrastructure.LDAP.Services
             return ret;
         }
 
-        public async Task<User> GetUserAsync(string userName, string domain, string techUser, string techPassword)
+        public async Task<User?> GetUserAsync(string userName, string domain, string techUser, string techPassword)
         {
             DirectoryEntry de = new("LDAP://" + domain, techUser, techPassword);           
             DirectorySearcher ds = BuildUserSearcher(de);
@@ -62,8 +62,9 @@ namespace InternalPortal.Infrastructure.LDAP.Services
                     }
                     user.memberOf = groupNames;
                 }
+                return user;
             }
-            return user;
+            return null;
         }
 
         private DirectorySearcher BuildUserSearcher(DirectoryEntry de)

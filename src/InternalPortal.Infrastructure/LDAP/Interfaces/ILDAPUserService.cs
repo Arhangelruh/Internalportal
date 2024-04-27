@@ -21,6 +21,6 @@ namespace InternalPortal.Infrastructure.LDAP.Interfaces
         /// <param name="techUser">Technical user login for get data from LDAP</param>
         /// <param name="techPassword">Technical user password for get data from LDAP</param>
         /// <returns>User model</returns>
-        Task<User> GetUserAsync(string userName, string domain, string techUser, string techPassword);
+        Task<User?> GetUserAsync(string userName, string domain, string techUser, string techPassword);
     }
 }
