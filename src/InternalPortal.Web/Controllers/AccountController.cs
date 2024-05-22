@@ -1,6 +1,4 @@
 ﻿using InternalPortal.Web.Interfaces;
-using InternalPortal.Web.Models;
-using InternalPortal.Web.Services;
 using InternalPortal.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,7 +8,7 @@ namespace InternalPortal.Web.Controllers
     {
         private readonly ISignInManager _signInManager;
 
-        public AccountController(           
+        public AccountController(
             ISignInManager signInManager
             )
         {

@@ -189,9 +189,49 @@ namespace InternalPortal.Core.Services
             return answers;
         }
 
-        public async Task<List<Test>> GetTestsAsync()
+        public async Task<List<Test>> GetTestsAsync(string sortOrder, int pageIndex, int pageSize)
         {
-            return await _repository.GetAll().AsNoTracking().ToListAsync();
+            var newRequest = _repository.GetAll();
+
+            switch (sortOrder)
+            {
+                case "User":
+                    newRequest = newRequest.OrderBy(n => n.Profile.LastName);
+                    break;
+                case "User_desc":
+                    newRequest = newRequest.OrderByDescending(n => n.Profile.LastName);
+                    break;
+                case "DateBegin":
+                    newRequest = newRequest.OrderBy(d => d.StartTime);
+                    break;
+                case "DateBegin_desc":
+                    newRequest = newRequest.OrderByDescending(d => d.StartTime);
+                    break;
+                case "DateEnd":
+                    newRequest = newRequest.OrderBy(d => d.EndTime);
+                    break;
+                case "DateEnd_desc":
+                    newRequest = newRequest.OrderByDescending(d => d.EndTime);
+                    break;
+                case "TestName":
+                    newRequest = newRequest.OrderBy(d => d.CashTest.TestName);
+                    break;
+                case "TestName_desc":
+                    newRequest = newRequest.OrderByDescending(d => d.CashTest.TestName);
+                    break;
+                case "TestResult":
+                    newRequest = newRequest.OrderBy(d => d.PassResult);
+                    break;
+                case "TestResult_desc":
+                    newRequest = newRequest.OrderByDescending(d => d.PassResult);
+                    break;
+                default:
+                    newRequest = newRequest.OrderByDescending(n => n.Id);
+                    break;
+            }            
+
+            var list = await newRequest.Skip(pageIndex * pageSize).Take(pageSize).AsNoTracking().ToListAsync();
+            return list;
         }
 
         public async Task<List<TestsAnswers>> GetQuestionAnswersAsync(int testId)
@@ -201,6 +241,11 @@ namespace InternalPortal.Core.Services
                 .AsNoTracking()
                 .Where(testanswer => testanswer.TestId == testId)
                 .ToListAsync();
+        }
+
+        public async Task<int> TestCountAsync()
+        {
+            return await _repository.GetAll().CountAsync();
         }
     }
 

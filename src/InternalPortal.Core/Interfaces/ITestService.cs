@@ -23,7 +23,7 @@ namespace InternalPortal.Core.Interfaces
         /// Get tests.
         /// </summary>
         /// <returns>Test Lists</returns>
-        Task<List<Test>> GetTestsAsync();
+        Task<List<Test>> GetTestsAsync(string sortOrder, int page, int pageSize);
 
         /// <summary>
         /// Get test answers.
@@ -31,5 +31,11 @@ namespace InternalPortal.Core.Interfaces
         /// <param name="testId"></param>
         /// <returns></returns>
         Task<List<TestsAnswers>> GetQuestionAnswersAsync(int testId);
+
+        /// <summary>
+        /// Get test table count.
+        /// </summary>
+        /// <returns>total count</returns>
+        Task<int> TestCountAsync();
     }
 }

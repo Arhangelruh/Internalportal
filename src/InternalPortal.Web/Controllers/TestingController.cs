@@ -6,7 +6,6 @@ using InternalPortal.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using System.Linq;
 using System.Security.Claims;
 
 namespace InternalPortal.Web.Controllers
@@ -37,7 +36,7 @@ namespace InternalPortal.Web.Controllers
             _testScoreService = testScoreService ?? throw new ArgumentNullException(nameof(testScoreService));
             _testAnswerService = testAnswerService ?? throw new ArgumentNullException(nameof(testAnswerService));
             _testQuestionService = testQuestionService ?? throw new ArgumentNullException(nameof(testQuestionService));
-            _cashTestService = cashTestService ?? throw new ArgumentNullException( nameof(cashTestService));
+            _cashTestService = cashTestService ?? throw new ArgumentNullException(nameof(cashTestService));
         }
 
 
@@ -120,7 +119,7 @@ namespace InternalPortal.Web.Controllers
 
                 List<TestsAnswers> testsAnswers = [];
                 var wrongAnswers = 0;
-               
+
 
                 foreach (var question in model.CashQuestions)
                 {
@@ -137,10 +136,10 @@ namespace InternalPortal.Web.Controllers
                             }
                         }
                     }
-                }              
-                
+                }
+
                 var getTest = await _cashTestService.GetCashTestByIdAsync(model.CashTestId);
-               
+
                 bool testResult = wrongAnswers <= getTest.WrongAnswers;
 
                 var test = new Test
@@ -172,7 +171,7 @@ namespace InternalPortal.Web.Controllers
                 }
                 if (testResult)
                 {
-                    ViewBag.ResulMessage = $"Поздравляем тест сдан успешно, допущено ошибок: {wrongAnswers}";                    
+                    ViewBag.ResulMessage = $"Поздравляем тест сдан успешно, допущено ошибок: {wrongAnswers}";
                     return View("FinishTest");
                 }
                 else
@@ -180,7 +179,7 @@ namespace InternalPortal.Web.Controllers
                     ViewBag.ResulMessage = $"Тест не пройден, допущено ошибок: {wrongAnswers}";
                     return View("FinishTest");
                 }
-                
+
             }
             return View(model);
         }
@@ -210,7 +209,8 @@ namespace InternalPortal.Web.Controllers
             ViewData["PageSize"] = pageSize;
 
             List<TestResultViewModel> testResults = [];
-            var tests = await _testService.GetTestsAsync();
+            var tests = await _testService.GetTestsAsync(sortOrder, page ?? 0, pageSize);
+            var getCount = await _testService.TestCountAsync();
 
             if (tests != null)
             {
@@ -237,44 +237,9 @@ namespace InternalPortal.Web.Controllers
                         TestResult = test.PassResult
                     });
                 }
-            }
-            switch (sortOrder)
-            {
-                case "User":
-                    testResults = testResults.OrderBy(n => n.Profile.LastName).ToList();
-                    break;
-                case "User_desc":
-                    testResults = testResults.OrderByDescending(n => n.Profile.LastName).ToList();
-                    break;
-                case "DateBegin":
-                    testResults = testResults.OrderBy(d => d.StartDate).ToList();
-                    break;
-                case "DateBegin_desc":
-                    testResults = testResults.OrderByDescending(d => d.StartDate).ToList();
-                    break;
-                case "DateEnd":
-                    testResults = testResults.OrderBy(d => d.EndDate).ToList();
-                    break;
-                case "DateEnd_desc":
-                    testResults = testResults.OrderByDescending(d => d.EndDate).ToList();
-                    break;
-                case "TestName":
-                    testResults = testResults.OrderBy(d => d.TestName).ToList();
-                    break;
-                case "TestName_desc":
-                    testResults = testResults.OrderByDescending(d => d.TestName).ToList();
-                    break;
-                case "TestResult":
-                    testResults = testResults.OrderBy(d => d.TestResult).ToList();
-                    break;
-                case "TestResult_desc":
-                    testResults = testResults.OrderByDescending(d => d.TestResult).ToList(); 
-                    break;
-                default:
-                    testResults = testResults.OrderByDescending(n => n.TestId).ToList();
-                    break;
-            }
-            return View(PaginatedList<TestResultViewModel>.Create(testResults, page ?? 1, pageSize));
+            }            
+            var paginatedList = new PaginatedList<TestResultViewModel>(testResults, getCount, page ?? 0, pageSize);
+            return View(paginatedList);
         }
 
         /// <summary>
@@ -324,11 +289,12 @@ namespace InternalPortal.Web.Controllers
                     }
                 }
 
-                foreach (var answer in questions) {
-                    answer.Answers.OrderBy(a=>a.Id).ToList();
+                foreach (var answer in questions)
+                {
+                    answer.Answers.OrderBy(a => a.Id).ToList();
                 }
             }
-            var models = questions.OrderBy(q=>q.TestTopicId).ToList();
+            var models = questions.OrderBy(q => q.TestTopicId).ToList();
             return View(models);
         }
 
@@ -343,7 +309,8 @@ namespace InternalPortal.Web.Controllers
             var scores = await _testScoreService.GetScoresAsync();
             List<TestScoreViewModel> models = [];
 
-            foreach (var score in scores) {
+            foreach (var score in scores)
+            {
                 var profile = await _profileService.GetProfileByIdAsync(score.ProfileId);
 
                 models.Add(new TestScoreViewModel
@@ -364,9 +331,10 @@ namespace InternalPortal.Web.Controllers
         /// </summary>
         /// <returns>Get user score view</returns>
         [Authorize(Roles = UserConstants.ManagerRole)]
-        public async Task<IActionResult> DeleteUserScore(int profileId) { 
-         
-            var checkProfile =await _profileService.GetProfileByIdAsync(profileId);
+        public async Task<IActionResult> DeleteUserScore(int profileId)
+        {
+
+            var checkProfile = await _profileService.GetProfileByIdAsync(profileId);
 
             if (checkProfile != null)
             {
