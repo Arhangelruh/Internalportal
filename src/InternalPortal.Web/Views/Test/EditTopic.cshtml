@@ -1,0 +1,23 @@
+﻿@model TestTopicViewModel
+
+<div class="text_error message">
+    @Html.ValidationMessage("Error")
+</div>
+
+
+<form class="forms" method="post" asp-controller="Test" asp-action="EditTopic">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="CashTestId" />
+    <div class="formslabel">
+        <label asp-for="TopicName">Тема</label><br />
+        <input class="formsfield" asp-for="TopicName" />
+        <span asp-validation-for="TopicName" class="text_error"></span>
+    </div>
+    <div class="formslabel-button">
+        <input class="form-button" type="submit" value="Сохранить" />
+    </div>
+</form>
+
+@section css {
+    <link href="~/css/test.css" rel="stylesheet" asp-append-version="true" />
+}

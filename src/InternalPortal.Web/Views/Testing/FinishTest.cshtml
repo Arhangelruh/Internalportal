@@ -1,0 +1,17 @@
+﻿
+@if (ViewBag.ResulMessage == null)
+{
+    <div class="finish_message">
+        <h1>Благодарим за участие в тестировании!</h1>
+    </div>
+}
+else
+{
+    <div class="finish_message">
+        <h1>@ViewBag.ResulMessage</h1>
+    </div>
+}
+
+@section css {
+    <link href="~/css/testing.css" rel="stylesheet" asp-append-version="true" />
+}

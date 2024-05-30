@@ -1,0 +1,258 @@
+
+.manage-test{
+    display: flex;
+    margin-top: 40px;
+    justify-content: space-evenly;
+}
+
+.manage-test-button{
+    border: solid;
+    border-width: 1px;
+    border-color: black;
+    width: 260px;
+    border-radius: 40px;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+}
+
+.test-button-text{
+    display: flex;
+    justify-content: center;
+    font-size: large;
+}
+
+.tests-table{
+    width: 600px;
+    margin-top: 40px;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid black;
+    border-collapse: collapse;    
+}
+
+.test-table-topic{
+    background-color: darkgrey;
+    height: 20px;
+}
+
+.test-table-tests{
+    border: solid;
+    border-width: 1px;
+    border-color: black;
+}
+
+.cashtest-table, .test-table-page{
+    display: flex;
+    flex-direction: row-reverse;
+    width: 90%;
+}
+
+.button-img{
+    border: solid 1px black;
+    border-radius: 20px;
+}
+
+.text-img{
+    font-size: large;
+    font-weight: bold;
+    text-align: center;
+}
+
+.test-table{
+    width: 70%;
+    border: 1px solid black;
+    border-collapse: collapse;    
+    margin: auto;
+}
+
+.test-table-header{
+    background-color: darkgray;
+    border-bottom: solid 1px;
+}
+
+.test-table-line, td,th{
+    border: solid 1px black;
+    border-collapse: collapse;
+}
+
+.test-name-column{
+    cursor: pointer;
+}
+
+.test-status-column{
+    text-align: center;
+    cursor: pointer;
+}
+
+.test-event-column{
+    text-align: center;
+    width: 150px;
+}
+
+.properties-item{
+    border: none;
+}
+
+.back-link-conteiner{
+    display: flex;
+    justify-content: center;
+    margin: 20px;
+}
+
+.back-link{
+    text-decoration: none;
+}
+
+.back-link-button{
+    border: 1px solid black;
+    width: 150px;
+    height: 30px;    
+    display: flex;
+    justify-content: center;  
+    align-items: center;
+    color: darkturquoise;
+    border-radius: 5px;
+}
+
+.back-link-button:hover{
+    background-color: yellowgreen;
+    color: white;
+}
+
+/*-----------------form--------------------*/
+.forms{
+    margin-left: auto;
+    margin-right: auto;        
+    margin-top: 5em;
+    width: 40em;
+    min-width: 30em;
+    border-style: solid;
+    border-width: thin;
+    border-color: darkgray;
+}
+
+.formslabel{
+    padding: 1em;
+    border: solid;
+    border-width: 1px 0px 0px 0px;
+    border-color: darkgray;
+}
+
+.formslabel-checbox,
+.formslabel-button
+{
+    padding: 0.5em 1em 0.5em 1em;
+    border: solid;
+    border-width: 1px 0px 0px 0px;
+    border-color: darkgray;
+}
+
+.formsfield{
+    width: 90%;
+    border: none;
+    height: 30px;
+    padding: 0 5% 0 5%;
+  }
+
+.formsfield::placeholder {
+    font-weight: bold;
+    opacity: 0.5;
+    color: darkturquoise;
+    padding-left: 10px;
+  }
+
+.test-checkbox{
+  height: 40px;
+  position: relative;
+  background: white;
+  label {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    cursor: pointer;
+    display: flex;   
+    justify-content: center;
+    align-items: center;
+    color: darkturquoise;     
+    &:after {
+        content: '';
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        background: yellowgreen;    
+        box-shadow: inset 0px 1px 1px white, 0px 1px 3px rgba(0,0,0,0.5);
+        opacity: 0;
+      }  
+      &:hover::after {
+        opacity: 0.3;
+      }
+   } 
+   input[type=checkbox] {
+    visibility: hidden;
+    display: none;
+    &:checked + label:after {
+      opacity: 1;
+    }   
+  } 
+}
+
+.form-button{
+    width: 100%;
+    height: 40px;
+    color: darkturquoise;
+    background-color: white;
+    cursor: pointer;
+}
+
+.form-button:hover{
+    color: white;
+    background-color: yellowgreen;
+}
+
+.Delete_answer,
+.Delete_question,
+.Delete_topic,
+.Delete_test{
+    cursor: pointer;
+    position: relative;
+}
+
+.tooltiptext{
+    display: none;
+    position: absolute; 
+    left: -420px;
+    top: -20px;   
+    padding: 5px;
+    z-index: 2;
+    background-color: #000000a6;
+    color: #fff;
+    width: 410px;
+}
+
+
+@media (max-width: 1000px) {
+.manage-test{
+    display: flex;
+    margin-top: 40px;
+    justify-content: space-evenly;
+    flex-direction: column;
+}
+}
+
+@media (max-width: 750px) {
+    .manage-test{
+        display: flex;
+        margin-top: 40px;
+        justify-content: space-evenly;
+        flex-direction: column;
+    }
+
+    .tooltiptext{
+        width: 300px;
+        left: -310px;
+    }
+    }

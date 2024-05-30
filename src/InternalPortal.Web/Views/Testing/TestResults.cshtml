@@ -1,0 +1,94 @@
+﻿@using InternalPortal.Web.Services;
+@model PaginatedList<TestResultViewModel>
+
+<div class="topic-table">
+    <div class="panel-heading">
+        
+    @if (Model.Any())
+        {
+            <table class="testing-table">
+                <tr class="testing-table-header">
+                    <th class="testing-table-header-column" onclick="location.href = '@Url.Action("TestResults", "Testing", new { sortOrder = ViewBag.UserSortParm, page = Model.PageIndex, pageSize = ViewData["PageSize"]})'">
+                        Специалист
+                        </th>
+                    <th class="testing-table-header-column" onclick="location.href = '@Url.Action("TestResults", "Testing", new { sortOrder = ViewBag.DateBeginSortParm, page = Model.PageIndex, pageSize = ViewData["PageSize"]})'">
+                        Время начала теста
+                        </th>
+                    <th class="testing-table-header-column" onclick="location.href = '@Url.Action("TestResults", "Testing", new { sortOrder = ViewBag.DateEndSortParm, page = Model.PageIndex, pageSize = ViewData["PageSize"]})'">
+                        Время завершения теста
+                        </th>
+                    <th class="testing-table-header-column" onclick="location.href = '@Url.Action("TestResults", "Testing", new { sortOrder = ViewBag.TestNameSortParam, page = Model.PageIndex, pageSize = ViewData["PageSize"]})'">
+                        Наименование теста
+                        </th>
+                    <th class="testing-table-header-column" onclick="location.href = '@Url.Action("TestResults", "Testing", new { sortOrder = ViewBag.TestResultSortParam, page = Model.PageIndex, pageSize = ViewData["PageSize"]})'">
+                        Результат тестирования
+                    </th>
+                </tr>
+                @foreach (var test in Model)
+                {
+                    <tr class="testing-table-line" onclick="location.href = '@Url.Action("UserResult", "Testing", new { testId = test.TestId })'">
+                        <td>@test.Profile.Name @test.Profile.LastName @test.Profile.MiddleName</td>
+                        <td>@test.StartDate</td>
+                        <td>@test.EndDate</td>
+                        <td>@test.TestName</td>                        
+                        @if (@test.TestResult)
+                        {
+                            <td>Сдан</td>
+                        } else
+                        {
+                            <td>Не сдан</td>
+                        }                        
+                    </tr>
+                }
+            </table>
+            <div class="table-settings">                
+                @if (Model.HasPreviousPage)
+                {
+                    <a class="table-settings-img nostyle-link" asp-action="TestResults"
+                       asp-route-sortOrder="@ViewData["CurrentSort"]"
+                       asp-route-page="@(Model.PageIndex - 1)"
+                       asp-route-pageSize="@ViewData["PageSize"]">
+                        <img title="Previous" src="/images/Left.svg" asp-append-version="true" />
+                    </a>
+                }
+                    <form asp-controller="Testing" asp-action="TestResults" method="get">
+                        <input type="hidden" asp-route-sortOrder="@ViewData["CurrentSort"]" name="cityId" />                        
+                        <select onchange="this.form.submit()" name="pagesize">
+                            @if (ViewData["PageSize"].ToString() =="20")
+                            {
+                                <option value="20"selected>20</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            }
+                            @if (ViewData["PageSize"].ToString() == "50")
+                            {
+                                <option value="20">20</option>
+                                <option value="50"selected>50</option>
+                                <option value="100">100</option>
+                            }
+                            @if (ViewData["PageSize"].ToString() == "100")
+                            {
+                                <option value="20">20</option>
+                                <option value="50" >50</option>
+                                <option value="100" selected>100</option>
+                            }
+                        </select>
+                    </form>                
+                @if (Model.HasNextPage)
+                {
+                    <a class=" table-settings-imgnostyle-link" asp-action="TestResults"
+                       asp-route-sortOrder="@ViewData["CurrentSort"]"
+                       asp-route-page="@(Model.PageIndex + 1)"
+                       asp-route-pageSize="@ViewData["PageSize"]">
+                        <img title="Next" src="/images/Right.svg" asp-append-version="true" />
+                    </a>
+                }
+            </div>
+        }
+    </div>
+    
+</div>
+
+@section css {
+    <link href="~/css/testing.css" rel="stylesheet" asp-append-version="true" />
+}

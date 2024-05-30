@@ -1,0 +1,32 @@
+﻿@model List<TestScoreViewModel>
+
+
+<div class="score-table">    
+
+    @if (Model.Any())
+    {
+        <table class="tasting-table">
+            <tr class="tasting-table-header">
+                <th>Пользователь</th>
+                <th>Количество попыток</th>
+                <th>Действия</th>
+            </tr>
+            @foreach (var score in Model)
+            {
+                <tr>
+                    <td>@score.LastName @score.UserName @score.MiddleName</td>
+                    <td>@score.Score</td>
+                    <td>
+                        <a asp-controller="Testing" asp-action="DeleteUserScore" asp-route-profileId="@score.ProfileId">
+                            <img title="Удалить" src="/images/Delete.svg" />
+                        </a>                        
+                    </td>
+                </tr>
+            }
+        </table>
+    }
+</div>
+
+@section css {
+    <link href="~/css/testing.css" rel="stylesheet" asp-append-version="true" />
+}

@@ -1,0 +1,29 @@
+﻿@model TestQuestionAnswerViewModel
+
+<div class="text_error message">
+    @Html.ValidationMessage("Error")
+</div>
+
+<form class="forms" method="post" asp-controller="Test" asp-action="AddTestAnswer">
+    <input type="hidden" asp-for="TestQuestionId" />
+    <input type="hidden" asp-for="CashTestId" />
+    <input type="hidden" asp-for="TestTopicId" />
+    <div class="formslabel">        
+        <input class="formsfield" asp-for="AnswerText" placeholder="Введите текст ответа." />
+        <span asp-validation-for="AnswerText" class="text_error"></span>
+    </div>
+    <div class="formslabel-checbox">
+        <div class="test-checkbox">
+        <input type="checkbox" id="squaredOne" asp-for="Meaning" />
+        <label for="squaredOne" asp-for="Meaning">Кликните здесь если ответ правильный</label><br />
+        <span asp-validation-for="Meaning" class="text_error"></span>
+    </div>
+    </div>
+    <div class="formslabel-button">
+        <input class="form-button" type="submit" value="Создать" />
+    </div>
+</form>
+
+@section css {
+    <link href="~/css/test.css" rel="stylesheet" asp-append-version="true" />
+}

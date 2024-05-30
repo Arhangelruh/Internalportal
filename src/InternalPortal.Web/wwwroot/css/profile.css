@@ -1,0 +1,33 @@
+.wrapper_profile{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: auto;
+    margin-bottom: auto;
+    min-height: 300px;
+}
+
+.formprofile{
+    width: 70%;    
+}
+
+.formslabel{
+    margin-left: 50%;
+    margin-top: 20px;
+}
+
+.changeprofile{
+    width: 30%;
+}
+
+.a_element{
+    display: flex;
+    text-align: center;
+    text-decoration: none;
+    height: 20px;
+}
+
+.a_text{
+    margin-left: 5px;
+}
+

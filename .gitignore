@@ -396,3 +396,6 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+/src/InternalPortal.Infrastructure/GlobalSuppressions.cs
+/src/InternalPortal.Web/appsettings.json
+/src/InternalPortal.Web/appsettings.json
