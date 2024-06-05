@@ -26,6 +26,11 @@
     cursor: pointer;
 }
 
+.score-table-header{
+    background-color: darkgray;
+    border-bottom: solid 1px;
+}
+
 .testing-table-header-column:hover{
    color: #80DF07;
 }
