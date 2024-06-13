@@ -39,7 +39,6 @@ namespace InternalPortal.Web.Controllers
             _cashTestService = cashTestService ?? throw new ArgumentNullException(nameof(cashTestService));
         }
 
-
         /// <summary>
         /// Build test.
         /// </summary>
@@ -120,6 +119,15 @@ namespace InternalPortal.Web.Controllers
                 List<TestsAnswers> testsAnswers = [];
                 var wrongAnswers = 0;
 
+                foreach(var question in model.CashQuestions)
+                {
+                    var checkAnswer = question.Answers.FirstOrDefault(answer => answer.Choise == true);
+                    if (checkAnswer==null) {
+                        ViewBag.ErrorMessage = "Тест не пройден, не получены ответы на все вопросы!!!";
+                        ViewBag.ErrorTitle = "Ошибка";
+                        return View("~/Views/Error/Error.cshtml");
+                    }
+                }
 
                 foreach (var question in model.CashQuestions)
                 {
