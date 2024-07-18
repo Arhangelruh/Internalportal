@@ -14,12 +14,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using System.Text;
+using NLog.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
 string connection = builder.Configuration.GetConnectionString("InternalPortalDatabase");
 string filesDirectory = builder.Configuration.GetSection("FilesPath:files").Value;
+var Logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
 
 builder.Services.AddDbContext<InternalPortalContext>(options =>
  options.UseNpgsql(connection));
@@ -108,6 +110,8 @@ builder.Services.Configure<ConfigurationFiles>(
         c.Files = filesDirectory;
         c.FileSizeLimit = builder.Configuration.GetSection("FilesPath:sizefile").Get<long>();
     });
+
+builder.Host.UseNLog();
 
 var app = builder.Build();
 

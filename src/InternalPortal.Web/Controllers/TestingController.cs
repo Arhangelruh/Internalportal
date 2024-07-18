@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Unicode;
 
 namespace InternalPortal.Web.Controllers
 {
@@ -19,16 +22,18 @@ namespace InternalPortal.Web.Controllers
         private readonly ITestAnswerService _testAnswerService;
         private readonly ITestQuestionService _testQuestionService;
         private readonly ICashTestService _cashTestService;
+		private readonly ILogger<TestingController> _logger;
 
-        public TestingController(
+		public TestingController(
             IOptions<ConfigurationTest> configurationTest,
             ITestService testService,
             IProfileService profileService,
             ITestScoreService testScoreService,
             ITestAnswerService testAnswerService,
             ITestQuestionService testQuestionService,
-            ICashTestService cashTestService
-            )
+            ICashTestService cashTestService,
+			ILogger<TestingController> logger
+			)
         {
             _configurationTest = configurationTest.Value ?? throw new ArgumentNullException(nameof(configurationTest));
             _testService = testService ?? throw new ArgumentNullException(nameof(testService));
@@ -37,6 +42,7 @@ namespace InternalPortal.Web.Controllers
             _testAnswerService = testAnswerService ?? throw new ArgumentNullException(nameof(testAnswerService));
             _testQuestionService = testQuestionService ?? throw new ArgumentNullException(nameof(testQuestionService));
             _cashTestService = cashTestService ?? throw new ArgumentNullException(nameof(cashTestService));
+            _logger = logger ?? throw new ArgumentNullException( nameof(logger));
         }
 
         /// <summary>
@@ -75,6 +81,7 @@ namespace InternalPortal.Web.Controllers
                                     Choise = false
                                 });
                             }
+                            _logger.LogWarning($"При формировании теста  {profile.Name.ToString()} {profile.LastName.ToString()} нет ответов на вопрос: {question.QuestionText}");
                         }
 
                         testQuestions.Add(new TestCashQuestionViewModel
@@ -90,6 +97,14 @@ namespace InternalPortal.Web.Controllers
                         CashQuestions = testQuestions,
                         startDate = DateTime.Now
                     };
+
+                    JsonSerializerOptions options = new JsonSerializerOptions
+                    {
+                        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                        WriteIndented = true
+                    };
+                    var jsonModel = JsonSerializer.Serialize(testModel,options);
+                    _logger.LogInformation( profile.Name.ToString() +" "+ profile.LastName.ToString() +" Запущен тест: "+ jsonModel);
 
                     return View(testModel);
                 }
