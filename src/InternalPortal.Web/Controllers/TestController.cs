@@ -16,7 +16,7 @@ namespace InternalPortal.Web.Controllers
         private readonly ITestTopicService _testTopicService;
         private readonly ITestQuestionService _testQuestionService;
         private readonly ITestAnswerService _testAnswerService;
-		private readonly ILogger<TestingController> _logger;
+		private readonly ILogger<TestController> _logger;
 		private readonly IProfileService _profileService;
 
 		public TestController(
@@ -24,7 +24,7 @@ namespace InternalPortal.Web.Controllers
             ITestQuestionService testQuestion,
             ITestAnswerService testAnswer,
             ICashTestService cashTestService,
-            ILogger<TestingController> logger,
+            ILogger<TestController> logger,
             IProfileService profileService)
         {
             _testAnswerService = testAnswer ?? throw new ArgumentNullException(nameof(testAnswer));

@@ -61,7 +61,7 @@ namespace InternalPortal.Web.Controllers
             {
                 var testData = await _testService.BuildTestAsync(cashTestId);
 
-                if (testData.Questions != null)
+                if (testData.Questions.Count() > 0)
                 {
                     List<TestCashQuestionViewModel> testQuestions = [];
 
@@ -69,7 +69,7 @@ namespace InternalPortal.Web.Controllers
                     {
                         var answers = testData.Answers.Where(answer => answer.TestQuestionId == question.Id);
                         List<TestCashAnswerViewModel> testQuestionAnswers = [];
-                        if (answers != null)
+                        if ( answers.Count() > 0)
                         {
                             foreach (var answer in answers)
                             {
@@ -80,9 +80,11 @@ namespace InternalPortal.Web.Controllers
                                     Meaning = answer.Meaning,
                                     Choise = false
                                 });
-                            }
-                            _logger.LogWarning($"При формировании теста  {profile.Name.ToString()} {profile.LastName.ToString()} нет ответов на вопрос: {question.QuestionText}");
+                            }                            
                         }
+                        else {
+							_logger.LogWarning($"При формировании теста  {profile.Name.ToString()} {profile.LastName.ToString()} нет ответов на вопрос: {question.QuestionText}");
+						}
 
                         testQuestions.Add(new TestCashQuestionViewModel
                         {
@@ -137,7 +139,7 @@ namespace InternalPortal.Web.Controllers
                 foreach(var question in model.CashQuestions)
                 {
                     var checkAnswer = question.Answers.FirstOrDefault(answer => answer.Choise == true);
-                    if (checkAnswer==null) {
+                    if (checkAnswer == null) {
                         ViewBag.ErrorMessage = "Тест не пройден, не получены ответы на все вопросы!!!";
                         ViewBag.ErrorTitle = "Ошибка";
                         return View("~/Views/Error/Error.cshtml");
