@@ -11,17 +11,21 @@ using InternalPortal.Web.Models;
 using InternalPortal.Web.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
-using System.Text;
+using NLog;
 using NLog.Web;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
 string connection = builder.Configuration.GetConnectionString("InternalPortalDatabase");
 string filesDirectory = builder.Configuration.GetSection("FilesPath:files").Value;
-var Logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
+var logger = LogManager.Setup()
+	.LoadConfigurationFromFile("nlog.config")
+	.GetCurrentClassLogger();
 
 builder.Services.AddDbContext<InternalPortalContext>(options =>
  options.UseNpgsql(connection));
@@ -110,6 +114,10 @@ builder.Services.Configure<ConfigurationFiles>(
         c.Files = filesDirectory;
         c.FileSizeLimit = builder.Configuration.GetSection("FilesPath:sizefile").Get<long>();
     });
+
+builder.Services.AddDataProtection()
+	.PersistKeysToFileSystem(new DirectoryInfo(@"C:\inetpub\DataProtectionKeys"))
+	.SetApplicationName("InternalPortal");
 
 builder.Host.UseNLog();
 
