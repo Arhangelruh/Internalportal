@@ -11,7 +11,7 @@ namespace InternalPortal.Infrastructure.LDAP.Interfaces
         /// <param name="userName">Login</param>
         /// <param name="password">Password</param>
         /// <returns>result</returns>
-        bool AuthenticateUserAsync(string domain, string userName, string password);
+        bool AuthenticateUser(string ldapServer, string domainFqdn, string userName, string password);
 
         /// <summary>
         /// Get user info from LDAP.

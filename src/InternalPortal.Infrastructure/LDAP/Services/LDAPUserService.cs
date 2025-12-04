@@ -1,120 +1,133 @@
 ﻿using InternalPortal.Infrastructure.LDAP.Interfaces;
 using InternalPortal.Infrastructure.LDAP.Model;
-using System.DirectoryServices;
+using System.DirectoryServices.Protocols;
+using System.Net;
 using System.Security.Principal;
-using System.Text;
 
 namespace InternalPortal.Infrastructure.LDAP.Services
 {
-    /// <inheritdoc cref="ILDAPUserService"/>
-    public class LDAPUserService : ILDAPUserService
-    {
-        /// <inheritdoc cref="ILDAPUserService"/>
-        public bool AuthenticateUserAsync(string domain, string userName, string password)
-        {
-            bool ret;
-            try
-            {
-                DirectoryEntry de = new DirectoryEntry("LDAP://" + domain, userName, password);
-                DirectorySearcher dsearch = new DirectorySearcher(de);
-                SearchResult results = null;
+	/// <inheritdoc cref="ILDAPUserService"/>
+	public class LDAPUserService : ILDAPUserService
+	{
+		public bool AuthenticateUser(string ldapServer, string domainFqdn, string userName, string password)
+		{
+			try
+			{
+				if (string.IsNullOrWhiteSpace(userName) || string.IsNullOrWhiteSpace(password))
+					return false;
 
-                results = dsearch.FindOne();
+				string normalizedUser = NormalizeUserName(userName, domainFqdn);
+				string escapedUser = EscapeLdap(normalizedUser);
 
-                ret = true;
-            }
-            catch
-            {
-                ret = false;
-            }
-            return ret;
-        }
+				using var connection = new LdapConnection(ldapServer)
+				{
+					AuthType = AuthType.Basic,
+					Timeout = TimeSpan.FromSeconds(10)
+				};
 
-        public async Task<User?> GetUserAsync(string userName, string domain, string techUser, string techPassword)
-        {
-            DirectoryEntry de = new("LDAP://" + domain, techUser, techPassword);           
-            DirectorySearcher ds = BuildUserSearcher(de);
+				connection.SessionOptions.ProtocolVersion = 3;
+				connection.Bind(new NetworkCredential(escapedUser, password));
 
-            ds.Filter = "(&(objectCategory=person)(objectClass=user)(sAMAccountName=" + userName + "))";
-            SearchResult sr = ds.FindOne();
+				return true;
+			}
+			catch
+			{
+				return false;
+			}
+		}
 
-            User user = new();
-            if (sr != null)
-            {
-                user.Name = await GetPropertyValueAsync(sr, "name");
-                user.Mail = await GetPropertyValueAsync(sr, "mail");
-                user.GiveName = await GetPropertyValueAsync(sr, "givenname");
-                user.Sn = await GetPropertyValueAsync(sr, "sn");
-                user.Login = await GetPropertyValueAsync(sr, "userPrincipalName");
-                user.DistinguishedName = await GetPropertyValueAsync(sr, "distinguishedName");
-                byte[] userSIdArray = (byte[])sr.Properties["objectSid"][0];
-                if (userSIdArray != null)
-                {
-                    user.Sid = new SecurityIdentifier(userSIdArray, 0).Value;
-                } 
-                
-                var groups = sr.Properties["memberOf"];
-                List<string> groupNames = new();
-                foreach (var group in groups) {
-                    if (group != null)
-                    {
-                        groupNames.Add(group.ToString().ToLower());
-                    }
-                    user.memberOf = groupNames;
-                }
-                return user;
-            }
-            return null;
-        }
+		public async Task<User?> GetUserAsync(string userName, string ldapServer, string techUser, string techPassword)
+		{
+			string escapedUser = EscapeLdap(userName);
 
-        private DirectorySearcher BuildUserSearcher(DirectoryEntry de)
-        {
-            DirectorySearcher ds = new(de);
+			string[] attributes =
+			{
+				"name",
+				"mail",
+				"givenName",
+				"sn",
+				"userPrincipalName",
+				"distinguishedName",
+				"objectSid",
+				"memberOf"
+			};
 
-            ds.PropertiesToLoad.Add("name");
+			using var connection = new LdapConnection(ldapServer)
+			{
+				AuthType = AuthType.Basic,
+				Timeout = new TimeSpan(0, 0, 30)
+			};
 
-            ds.PropertiesToLoad.Add("mail");
+			connection.SessionOptions.ProtocolVersion = 3;
+			connection.Bind(new NetworkCredential(techUser, techPassword));
 
-            ds.PropertiesToLoad.Add("givenname");
+			string searchBase = GetDefaultNamingContext(connection);
 
-            ds.PropertiesToLoad.Add("sn");
+			string filter = $"(&(objectCategory=person)(objectClass=user)(sAMAccountName={escapedUser}))";
 
-            ds.PropertiesToLoad.Add("userPrincipalName");
+			var request = new SearchRequest(searchBase, filter, SearchScope.Subtree, attributes);
 
-            ds.PropertiesToLoad.Add("distinguishedName");
+			var response = (SearchResponse)connection.SendRequest(request);
 
-            ds.PropertiesToLoad.Add("objectSid");
+			if (response.Entries.Count == 0)
+				return null;
 
-            ds.PropertiesToLoad.Add("memberOf");
+			var entry = response.Entries[0];
+			var user = new User
+			{
+				Name = entry.Get("name"),
+				Mail = entry.Get("mail"),
+				GiveName = entry.Get("givenName"),
+				Sn = entry.Get("sn"),
+				Login = entry.Get("userPrincipalName"),
+				DistinguishedName = entry.Get("distinguishedName"),
+				memberOf = entry.GetList("memberOf").ConvertAll(s => s.ToLower())
+			};
 
-            return ds;
-        }
+			var sidBytes = entry.GetBytes("objectSid");
+			if (sidBytes != null)
+				user.Sid = new SecurityIdentifier(sidBytes, 0).Value;
 
-        private async Task<string> BuildOctetString(SecurityIdentifier sid)
-        {
-            byte[] items = new byte[sid.BinaryLength];
-            sid.GetBinaryForm(items, 0);
-            StringBuilder sb = new StringBuilder();
-            await Task.Run(() =>
-            {
-                foreach (byte b in items)
-                {
-                    sb.Append(b.ToString("X2"));
-                }
-            });
-            return sb.ToString();
-        }
+			return user;
+		}
 
-        private async Task<string> GetPropertyValueAsync(SearchResult sr, string propertyName)
-        {
-            StringBuilder sb = new();
+		private static string EscapeLdap(string value)
+		{
+			return value
+				.Replace("\\", "\\5c")
+				.Replace("*", "\\2a")
+				.Replace("(", "\\28")
+				.Replace(")", "\\29")
+				.Replace("\0", "\\00")
+				.Replace("/", "\\2f");
+		}
 
-            await Task.Run(() =>
-            {
-                if (sr.Properties[propertyName].Count > 0)
-                    sb.Append(sr.Properties[propertyName][0].ToString());
-            });
-            return sb.ToString();
-        }
-    }
+		private static string NormalizeUserName(string userName, string domainFqdn)
+		{
+			if (userName.Contains("@"))
+				return userName;
+
+			if (userName.Contains("\\"))
+			{
+				var parts = userName.Split('\\');
+				return $"{parts[1]}@{domainFqdn}";
+			}
+
+			return $"{userName}@{domainFqdn}";
+		}
+
+		private static string GetDefaultNamingContext(LdapConnection connection)
+		{
+			var request = new SearchRequest(
+				"",
+				"(objectClass=*)",
+				SearchScope.Base,
+				"defaultNamingContext"
+			);
+
+			var response = (SearchResponse)connection.SendRequest(request);
+
+			return response.Entries[0].Attributes["defaultNamingContext"][0].ToString();
+		}
+	}
 }
