@@ -25,25 +25,26 @@
     </a>
     </div>
 }
-else{
-@if (Model.Any())
-{    
-     <table class="tests-table">
-            <tr><th class="test-table-topic">Варианты тестов для прохождения</th></tr>
-            @foreach (var cashTest in Model)
-    {
-                <tr >
-					<td class ="test-table-tests">
-                        <a class="nostyle-link" asp-controller="Testing" asp-action="Test" asp-route-cashTestId="@cashTest.Id">
-            <p>@cashTest.CashTestName</p>
-        </a>
-                    </td>
-                </tr>
+else{    
+      @if (Model.Any() && User.IsInRole(UserConstants.CashStudents))
+       {    
+         <table class="tests-table">
+           <tr><th class="test-table-topic">Варианты тестов для прохождения</th></tr>
+              @foreach (var cashTest in Model)
+                 {
+                   <tr>
+					  <td class ="test-table-tests">
+                         <a class="nostyle-link" asp-controller="Testing" asp-action="Test" asp-route-cashTestId="@cashTest.Id">
+                             <p>@cashTest.CashTestName</p>
+                         </a>
+                      </td>
+                   </tr>
+                 }
+               </table>
             }
-    </table>
-}
-}
-</div>
+       }
+    }
+      </div>
 @section css {
     <link href="~/css/test.css" rel="stylesheet" asp-append-version="true" />
 }

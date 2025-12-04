@@ -1,14 +1,15 @@
-﻿
+﻿@using InternalPortal.Web.Constants
 <div class="cash-wrapper">
     <a class="cash-action-button" asp-controller="Cash" asp-action="Education">
     <p>Обучение</p>
 </a>
-
-<a class="cash-action-button" asp-controller="Cash" asp-action="Test">
-    <p>Тестирование</p>
-</a>
+    @if (User.IsInRole(UserConstants.ManagerRole) || User.IsInRole(UserConstants.CashStudents))
+    {
+        <a class="cash-action-button" asp-controller="Cash" asp-action="Test">
+            <p>Тестирование</p>
+        </a>        
+    }
 </div>
-
-@section css {
+    @section css {
     <link href="~/css/cash.css" rel="stylesheet" asp-append-version="true" />
 }
