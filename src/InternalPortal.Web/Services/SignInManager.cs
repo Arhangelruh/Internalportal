@@ -1,16 +1,19 @@
 ﻿using InternalPortal.Core.Interfaces;
 using InternalPortal.Core.Models;
+using InternalPortal.Infrastructure.LDAP.Constants;
 using InternalPortal.Infrastructure.LDAP.Interfaces;
 using InternalPortal.Web.Constants;
 using InternalPortal.Web.Interfaces;
 using InternalPortal.Web.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
 
 namespace InternalPortal.Web.Services
 {
+	/// <inheritdoc cref="ILDAPUserService"/>
 	public class SignInManager(IOptions<ConfigurationAD> configurationAD,
 						 ILDAPUserService lDAPUserService,
 						 IHttpContextAccessor httpContextAccessor,
@@ -22,14 +25,13 @@ namespace InternalPortal.Web.Services
 		private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
 		private readonly IProfileService _profileService = profileService ?? throw new ArgumentNullException(nameof(profileService));
 
-		public async Task<bool> SignIn(string userName, string password)
+		public async Task<bool> SignIn(string userName, string password, ModelStateDictionary modelState)
 		{
+			var checkUser = _lDAPUserService.AuthenticateUser(_configurationAD.LDAPserver, _configurationAD.DomainFqdn, userName, password, _configurationAD.Username, _configurationAD.Password);
 
-			var checkUser = _lDAPUserService.AuthenticateUser(_configurationAD.LDAPserver, _configurationAD.DomainFqdn, userName, password);
-
-			if (checkUser)
+			if (checkUser == LdapAuthResult.Success)
 			{
-				var user = await _lDAPUserService.GetUserAsync(userName, _configurationAD.LDAPserver, _configurationAD.Username, _configurationAD.Password);
+				var user = _lDAPUserService.GetUser(userName, _configurationAD.LDAPserver, _configurationAD.Username, _configurationAD.Password);
 				if (user != null)
 				{
 					var checkProfileBySid = await _profileService.GetProfileByUserSIDAsync(user.Sid);
@@ -52,7 +54,6 @@ namespace InternalPortal.Web.Services
 							claims.Add(new Claim(ClaimTypes.Role, UserConstants.ManagerRole));
 						if (group.Contains(_configurationAD.CashStudents.ToLower()))
 							claims.Add(new Claim(ClaimTypes.Role, UserConstants.CashStudents));
-
 					}
 
 					var identity = new ClaimsIdentity(
@@ -80,8 +81,45 @@ namespace InternalPortal.Web.Services
 					}
 					return true;
 				}
+				return false;
 			}
-			return false;
+			else
+			{				
+				switch (checkUser)
+				{
+					case LdapAuthResult.UserNotFound:
+						modelState.AddModelError("",$"Пользователь {userName} не найден.");
+						break;
+					case LdapAuthResult.InvalidPassword:
+						modelState.AddModelError("", "Не верно указан пароль.");
+						break;
+					case LdapAuthResult.PasswordExpired:
+						modelState.AddModelError("", "Истек срок действия пароля.");
+						break;
+					case LdapAuthResult.AccountDisabled:
+						modelState.AddModelError("", "Учетная запись отключена.");
+						break;
+					case LdapAuthResult.AccountExpired:
+						modelState.AddModelError("", "Истек срок действия учетной записи.");
+						break;
+					case LdapAuthResult.MustChangePassword:
+						modelState.AddModelError("", "Требуется смена пароля.");
+						break;
+					case LdapAuthResult.AccountLocked:
+						modelState.AddModelError("", "Учетная запись заблокирована.");
+						break;
+					case LdapAuthResult.LoginNotAllowedAtThisTime:
+						modelState.AddModelError("", "Запрещена работа вашей учетной записи в данное время.");
+						break;
+					case LdapAuthResult.LoginNotAllowedFromWorkstation:
+						modelState.AddModelError("", "Запрещена работа вашей учетной записи с этой машины.");
+						break;
+					default:
+						modelState.AddModelError("", "Неизвестная ошибка.");
+						break;
+				}
+				return false;
+			}			
 		}
 
 

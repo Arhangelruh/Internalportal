@@ -38,7 +38,7 @@ namespace InternalPortal.Web.Controllers
             if (ModelState.IsValid)
             {
                 var result =
-                    await _signInManager.SignIn(model.UserName, model.Password);
+                    await _signInManager.SignIn(model.UserName, model.Password, ModelState);
                 if (result)
                 {
                     if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
@@ -49,11 +49,7 @@ namespace InternalPortal.Web.Controllers
                     {
                         return RedirectToAction("Index", "Home");
                     }
-                }
-                else
-                {
-                    ModelState.AddModelError("", "Не правильный логин и (или) пароль");
-                }
+                }               
             }
             return View(model);
         }
