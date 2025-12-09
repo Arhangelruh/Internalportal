@@ -11,15 +11,20 @@ using InternalPortal.Web.Models;
 using InternalPortal.Web.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
-using System.Text;
+using NLog;
+using NLog.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
 string connection = builder.Configuration.GetConnectionString("InternalPortalDatabase");
 string filesDirectory = builder.Configuration.GetSection("FilesPath:files").Value;
+var logger = LogManager.Setup()
+	.LoadConfigurationFromFile("nlog.config")
+	.GetCurrentClassLogger();
 
 builder.Services.AddDbContext<InternalPortalContext>(options =>
  options.UseNpgsql(connection));
@@ -43,71 +48,81 @@ var physicalProvider = new PhysicalFileProvider(filesDirectory);
 builder.Services.AddSingleton<IFileProvider>(physicalProvider);
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-        .AddCookie(
-            options =>
-            {
-                options.Cookie.HttpOnly = true;
-                options.ExpireTimeSpan = TimeSpan.FromDays(11);
-                options.SlidingExpiration = true;
-                options.LoginPath = "/account/login";
-                options.AccessDeniedPath = "/account/access-denied";
-            }
-        );
+		.AddCookie(
+			options =>
+			{
+				options.Cookie.HttpOnly = true;
+				options.ExpireTimeSpan = TimeSpan.FromDays(11);
+				options.SlidingExpiration = true;
+				options.LoginPath = "/account/login";
+				options.AccessDeniedPath = "/account/access-denied";
+			}
+		);
 
 
 builder.Services.AddAuthorization(options =>
 {
-    options.DefaultPolicy = new AuthorizationPolicyBuilder()
-        .RequireAuthenticatedUser()
-        .Build();
+	options.DefaultPolicy = new AuthorizationPolicyBuilder()
+		.RequireAuthenticatedUser()
+		.Build();
 });
 
 builder.Services.AddRazorPages(options =>
 {
-    options.Conventions
-        .AddPageApplicationModelConvention("/Education",
-            model =>
-            {
-                model.Filters.Add(
-                    new GenerateAntiforgeryTokenCookieAttribute());
-                model.Filters.Add(
-                    new DisableFormValueModelBindingAttribute());
-            });
+	options.Conventions
+		.AddPageApplicationModelConvention("/Education",
+			model =>
+			{
+				model.Filters.Add(
+					new GenerateAntiforgeryTokenCookieAttribute());
+				model.Filters.Add(
+					new DisableFormValueModelBindingAttribute());
+			});
 });
 
-builder.Services.Configure<ConfigurationAD>(
-    c =>
-    {
-        c.Port = builder.Configuration.GetSection("AD:port").Get<int>();
-        c.Zone = builder.Configuration.GetSection("AD:zone").Value;
-        c.Domain = builder.Configuration.GetSection("AD:domain").Value;
-        c.Subdomain = builder.Configuration.GetSection("AD:subdomain").Value;
-        c.Username = builder.Configuration.GetSection("AD:username").Value;
-        c.Password = builder.Configuration.GetSection("AD:password").Value;
-        c.LDAPserver = $"{c.Subdomain}.{c.Domain}.{c.Zone}";
-        c.LDAPQueryBase = $"DC={c.Domain},DC={c.Zone}";
-        c.Users = new StringBuilder()
-            .Append($"CN={builder.Configuration.GetSection($"AD:{UserConstants.ManagerRole}").Value},")
-            .Append($"CN=Users,{c.LDAPQueryBase}")
-            .ToString();
-        c.Managers = new StringBuilder()
-            .Append($"CN={builder.Configuration.GetSection($"AD:{UserConstants.ManagerRole}").Value},")
-            .ToString();
-    }
-);
+builder.Services.Configure<ConfigurationAD>(c =>
+{
+	var config = builder.Configuration;
+
+	c.Port = config.GetValue<int>("AD:port");
+
+	c.DomainFqdn = config["AD:domainFqdn"]!;
+	c.LDAPserver = config["AD:ldapServer"] ?? c.DomainFqdn;
+
+	c.Username = config["AD:username"]!;
+	c.Password = config["AD:password"]!;
+
+	c.LDAPQueryBase = string.Join(
+		",",
+		c.DomainFqdn
+			.Split('.', StringSplitOptions.RemoveEmptyEntries)
+			.Select(part => $"DC={part}")
+	);
+
+	var managerRole = config[$"AD:{UserConstants.ManagerRole}"];
+
+	c.Managers = $"CN={managerRole}";
+	c.CashStudents = $"CN={config[$"AD:{UserConstants.CashStudents}"]}";
+});
 
 builder.Services.Configure<ConfigurationTest>(
-    c =>
-    {
-        try { c.Repeat = builder.Configuration.GetSection("Test:repeat").Get<int>(); } catch { c.Repeat = ConfigurationConstant.repeat; }
-    });
+	c =>
+	{
+		try { c.Repeat = builder.Configuration.GetSection("Test:repeat").Get<int>(); } catch { c.Repeat = ConfigurationConstant.repeat; }
+	});
 
 builder.Services.Configure<ConfigurationFiles>(
-    c =>
-    {
-        c.Files = filesDirectory;
-        c.FileSizeLimit = builder.Configuration.GetSection("FilesPath:sizefile").Get<long>();
-    });
+	c =>
+	{
+		c.Files = filesDirectory;
+		c.FileSizeLimit = builder.Configuration.GetSection("FilesPath:sizefile").Get<long>();
+	});
+
+builder.Services.AddDataProtection()
+	.PersistKeysToFileSystem(new DirectoryInfo(@"C:\inetpub\DataProtectionKeys"))
+	.SetApplicationName("InternalPortal");
+
+builder.Host.UseNLog();
 
 var app = builder.Build();
 
@@ -115,8 +130,8 @@ AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
-    app.UseHsts();
+	app.UseExceptionHandler("/Home/Error");
+	app.UseHsts();
 }
 
 app.UseHttpsRedirection();
@@ -127,7 +142,7 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+	name: "default",
+	pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

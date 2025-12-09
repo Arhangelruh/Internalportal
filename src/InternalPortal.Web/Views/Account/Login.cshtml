@@ -5,14 +5,14 @@
       asp-route-returnUrl="@Model.ReturnUrl">
     <div class="login-form">
             <div class="login-text"><strong></>Пройдите авторизацию</strong></div>
-           <div asp-validation-summary="ModelOnly" class="text_error"></div>
+           <div asp-validation-summary="ModelOnly" class="text_error login_error"></div>
              <div class="formslabel">
             <input class="formsfield" asp-for="UserName" placeholder="Введите логин" /><br />
-               <span asp-validation-for="UserName" class="text_error"></span>
+               <span asp-validation-for="UserName" class="text_error login_error"></span>
              </div>
              <div class="formslabel">
             <input class="formsfield" asp-for="Password" placeholder="Введите пароль" /><br />
-               <span asp-validation-for="Password" class="text_error"></span>
+               <span asp-validation-for="Password" class="text_error login_error"></span>
              </div>
             <div class="formslabel_button">
                 <input class="login_button" type="submit" value="ВОЙТИ" />

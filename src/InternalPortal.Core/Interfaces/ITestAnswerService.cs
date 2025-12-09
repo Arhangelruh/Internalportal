@@ -33,12 +33,19 @@ namespace InternalPortal.Core.Interfaces
         /// <returns>List answers</returns>
         Task<List<TestQuestionAnswers>> GetAnswersByQuestionAsync(int testQuestionId);
 
-        /// <summary>
-        /// Delete answer.
-        /// </summary>
-        /// <param name="testAnswerId">Test answer id</param>
-        /// <returns>result</returns>
-        Task<bool> DeleteAsync(int testAnswerId);
+		/// <summary>
+		/// Get actual answers by question.
+		/// </summary>
+		/// <param name="testQuestionId"></param>
+		/// <returns>>List actual answers</returns>
+		Task<List<TestQuestionAnswers>> GetActualAnswersByQuestionAsync(int testQuestionId);
+
+		/// <summary>
+		/// Delete answer.
+		/// </summary>
+		/// <param name="testAnswerId">Test answer id</param>
+		/// <returns>result</returns>
+		Task<bool> DeleteAsync(int testAnswerId);
 
         /// <summary>
         /// Change actual status.

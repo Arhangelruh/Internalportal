@@ -67,3 +67,13 @@
     cursor: pointer;
     font-weight: 600;
 }
+
+.login_error{
+    color: red;
+    justify-content: center;       
+    display: flex; 
+}
+
+.login_error li::marker {
+    content: "";
+}

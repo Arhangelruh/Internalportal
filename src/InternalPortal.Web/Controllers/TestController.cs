@@ -1,10 +1,12 @@
 ﻿using InternalPortal.Core.Interfaces;
 using InternalPortal.Core.Models;
+using InternalPortal.Core.Services;
 using InternalPortal.Web.Constants;
 using InternalPortal.Web.Models;
 using InternalPortal.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace InternalPortal.Web.Controllers
 {
@@ -14,14 +16,24 @@ namespace InternalPortal.Web.Controllers
         private readonly ITestTopicService _testTopicService;
         private readonly ITestQuestionService _testQuestionService;
         private readonly ITestAnswerService _testAnswerService;
+		private readonly ILogger<TestController> _logger;
+		private readonly IProfileService _profileService;
 
-        public TestController(ITestTopicService topicService, ITestQuestionService testQuestion, ITestAnswerService testAnswer, ICashTestService cashTestService)
+		public TestController(
+            ITestTopicService topicService,
+            ITestQuestionService testQuestion,
+            ITestAnswerService testAnswer,
+            ICashTestService cashTestService,
+            ILogger<TestController> logger,
+            IProfileService profileService)
         {
             _testAnswerService = testAnswer ?? throw new ArgumentNullException(nameof(testAnswer));
             _testTopicService = topicService ?? throw new ArgumentNullException(nameof(topicService));
             _testQuestionService = testQuestion ?? throw new ArgumentException(nameof(testQuestion));
             _cashTestService = cashTestService ?? throw new ArgumentException(nameof(cashTestService));
-        }
+			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _profileService = profileService ?? throw new ArgumentNullException(nameof(profileService));
+		}
 
         /// <summary>
         /// Model for create CashTest.
@@ -749,8 +761,18 @@ namespace InternalPortal.Web.Controllers
 
                 if (result)
                 {
-                    return RedirectToAction("GetAnswers", new { questionId = editAnswer.TestQuestionId, topicId = editAnswer.TestTopicId, cashTestId = editAnswer.CashTestId });
-                }
+					var profileSID = User.Claims.Where(claim => claim.Type == ClaimTypes.Sid).Select(claim => claim.Value).SingleOrDefault();
+                    if (profileSID != null)
+                    {
+                        var profile = await _profileService.GetProfileByUserSIDAsync(profileSID);
+                        if (profile != null)
+                        {
+                            _logger.LogInformation($"Пользователь {profile.Name} {profile.LastName} откорректировал ответ {editAnswer.AnswerText}");
+                        }
+                    }
+
+					return RedirectToAction("GetAnswers", new { questionId = editAnswer.TestQuestionId, topicId = editAnswer.TestTopicId, cashTestId = editAnswer.CashTestId });					
+				}
                 else
                 {
                     ViewBag.ErrorMessage = "Не возможно изменить ответ, возможно он уже был применен во время тестирования.";
@@ -824,7 +846,17 @@ namespace InternalPortal.Web.Controllers
             {
                 getAnswer.IsActual = getAnswer.IsActual == true ? false : true;
                 await _testAnswerService.ChangeStatusAsync(getAnswer);
-                return RedirectToAction("GetAnswers", new { questionId = getAnswer.TestQuestionId, topicId = getTopic.Id, cashTestId = getTopic.CashTestId });
+
+				var profileSID = User.Claims.Where(claim => claim.Type == ClaimTypes.Sid).Select(claim => claim.Value).SingleOrDefault();
+				if (profileSID != null)
+				{
+					var profile = await _profileService.GetProfileByUserSIDAsync(profileSID);
+					if (profile != null)
+					{
+						_logger.LogInformation($"Пользователь {profile.Name} {profile.LastName} изменил статус ответа {getAnswer.AnswerText}");
+					}
+				}
+				return RedirectToAction("GetAnswers", new { questionId = getAnswer.TestQuestionId, topicId = getTopic.Id, cashTestId = getTopic.CashTestId });
             }
         }
     }

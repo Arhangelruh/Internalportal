@@ -1,6 +1,7 @@
 ﻿using InternalPortal.Core.Interfaces;
 using InternalPortal.Core.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace InternalPortal.Core.Services
 {
@@ -12,15 +13,18 @@ namespace InternalPortal.Core.Services
         private readonly ITestQuestionService _testQuestionService;
         private readonly ITestAnswerService _testAnswerService;
         private readonly ICashTestService _cashTestService;
+        private readonly ILogger<TestService> _logger;
 
-        public TestService(
+
+		public TestService(
             IRepository<Test> repository,
             IRepository<TestsAnswers> repositoryTestAnswers,
             ITestTopicService testTopicService,
             ITestQuestionService testQuestionService,
             ITestAnswerService testAnswerService,
-            ICashTestService cashTestService
-            )
+            ICashTestService cashTestService,
+			ILogger<TestService> logger
+			)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _repositoryTestAnswers = repositoryTestAnswers ?? throw new ArgumentNullException(nameof(repositoryTestAnswers));
@@ -28,6 +32,7 @@ namespace InternalPortal.Core.Services
             _testQuestionService = testQuestionService ?? throw new ArgumentNullException(nameof(testQuestionService));
             _testAnswerService = testAnswerService ?? throw new ArgumentNullException(nameof(testAnswerService));
             _cashTestService = cashTestService ?? throw new ArgumentNullException(nameof(cashTestService));
+            _logger = logger ?? throw new ArgumentNullException( nameof(logger));
         }
 
         public async Task AddAsync(Test test)
@@ -61,16 +66,33 @@ namespace InternalPortal.Core.Services
         public async Task<TestDto> BuildTestAsync(int cashTestId)
         {
             var cashTest = await _cashTestService.GetCashTestByIdAsync(cashTestId);
-            var topics = await _testTopicService.GetActiveTopicsByCashTestAsync(cashTestId);
-
-            var questions = await GetQuestionListAsync(topics, cashTest.TestQuestions);
-            var answers = await GetAnswersAsync(questions);
-
-            return new TestDto
+            if (cashTest != null)
             {
-                Questions = questions,
-                Answers = answers
-            };
+                var topics = await _testTopicService.GetActiveTopicsByCashTestAsync(cashTestId);
+                if (topics.Count() > 0)
+                {
+                    var questions = await GetQuestionListAsync(topics, cashTest.TestQuestions);
+                    if (questions.Count() == 0) {
+						_logger.LogWarning($"Метод {(nameof(GetQuestionListAsync))} не вернул вопросов.");
+					}
+
+                    var answers = await GetAnswersAsync(questions);
+                    if (answers.Count() == 0)
+                    {
+						_logger.LogWarning($"Метод {(nameof(GetAnswersAsync))} не вернул ответов.");
+					}
+
+                    return new TestDto
+                    {
+                        Questions = questions,
+                        Answers = answers
+                    };
+                }
+				_logger.LogWarning($"Не найдены темы теста id {cashTestId}");
+				return new TestDto();
+			}
+            _logger.LogWarning($"Не найден тест с id {cashTestId}");
+            return new TestDto();
         }
 
         private TestQuestions GetRandomQuestionAsync(TestTopics topic, List<TestQuestions> allQuestions)
@@ -174,13 +196,17 @@ namespace InternalPortal.Core.Services
 
             foreach (var question in questions)
             {
-                var questionAnswers = await _testAnswerService.GetAnswersByQuestionAsync(question.Id);
-                if (questionAnswers != null)
+                var questionAnswers = await _testAnswerService.GetActualAnswersByQuestionAsync(question.Id);
+                if ( questionAnswers.Count()> 0)
                 {
                     foreach (var answer in questionAnswers)
                     {
                         answers.Add(answer);
                     }
+                }
+                else
+                {
+                    _logger.LogWarning($"Сервис {nameof(_testAnswerService)} {question.QuestionText}");
                 }
             }
 
