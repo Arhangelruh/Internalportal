@@ -1,6 +1,7 @@
 ﻿using InternalPortal.Infrastructure.LDAP.Constants;
 using InternalPortal.Infrastructure.LDAP.Interfaces;
 using InternalPortal.Infrastructure.LDAP.Model;
+using Microsoft.Extensions.Logging;
 using System.DirectoryServices.Protocols;
 using System.Net;
 using System.Security.Principal;
@@ -9,8 +10,10 @@ using System.Text;
 namespace InternalPortal.Infrastructure.LDAP.Services
 {
 	/// <inheritdoc cref="ILDAPUserService"/>
-	public class LDAPUserService : ILDAPUserService
+	public class LDAPUserService(ILogger<LDAPUserService> logger) : ILDAPUserService
 	{
+		private readonly ILogger<LDAPUserService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
 		public LdapAuthResult AuthenticateUser(string ldapServer, string domainFqdn, string userName, string password, string techUser, string techPassword)
 		{
 			try
@@ -33,7 +36,7 @@ namespace InternalPortal.Infrastructure.LDAP.Services
 				}
 				catch (LdapException ex)
 				{
-					Console.WriteLine("Tech bind failed: " + ex.ServerErrorMessage);
+					_logger.LogCritical($"Ошибка подключения к AD от имени технического пользователя {techUser}: {ex.Message}");
 					return LdapAuthResult.UnknownError;
 				}
 
@@ -66,11 +69,17 @@ namespace InternalPortal.Infrastructure.LDAP.Services
 				}
 				catch (LdapException ex)
 				{
-					return MapLdapBindError(ex);
+					var error = MapLdapBindError(ex);
+
+					if (error == LdapAuthResult.UnknownError)
+						_logger.LogCritical($"Получена ошибка проверки пользователя {ex.Message}");
+
+					return error;
 				}
 			}
-			catch
+			catch(Exception ex)
 			{
+				_logger.LogCritical($"Сервис AuthenticateUser вернул ошибку {ex.Message}");
 				return LdapAuthResult.UnknownError;
 			}
 		}
@@ -175,14 +184,14 @@ namespace InternalPortal.Infrastructure.LDAP.Services
 
 			return msg switch
 			{
-				var s when s.Contains("data 525") => LdapAuthResult.UserNotFound,                  
-				var s when s.Contains("data 52e") => LdapAuthResult.InvalidPassword,               
-				var s when s.Contains("data 532") => LdapAuthResult.PasswordExpired,               
-				var s when s.Contains("data 533") => LdapAuthResult.AccountDisabled,               
-				var s when s.Contains("data 701") => LdapAuthResult.AccountExpired,                
-				var s when s.Contains("data 773") => LdapAuthResult.MustChangePassword,            
-				var s when s.Contains("data 775") => LdapAuthResult.AccountLocked,                 
-				var s when s.Contains("data 530") => LdapAuthResult.LoginNotAllowedAtThisTime,     
+				var s when s.Contains("data 525") => LdapAuthResult.UserNotFound,
+				var s when s.Contains("data 52e") => LdapAuthResult.InvalidPassword,
+				var s when s.Contains("data 532") => LdapAuthResult.PasswordExpired,
+				var s when s.Contains("data 533") => LdapAuthResult.AccountDisabled,
+				var s when s.Contains("data 701") => LdapAuthResult.AccountExpired,
+				var s when s.Contains("data 773") => LdapAuthResult.MustChangePassword,
+				var s when s.Contains("data 775") => LdapAuthResult.AccountLocked,
+				var s when s.Contains("data 530") => LdapAuthResult.LoginNotAllowedAtThisTime,
 				var s when s.Contains("data 531") => LdapAuthResult.LoginNotAllowedFromWorkstation,
 				_ => LdapAuthResult.UnknownError
 			};
