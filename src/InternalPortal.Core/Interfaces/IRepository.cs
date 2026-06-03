@@ -62,5 +62,13 @@ namespace InternalPortal.Core.Interfaces
         /// Persists all updates to the data source async.
         /// </summary>
         Task SaveChangesAsync();
-    }
+
+		/// <summary>
+		/// Delete entities by field.
+		/// </summary>
+		/// <param name="predicate"></param>
+		/// <returns>LINQ predicate.</returns>
+		Task<int> DeleteWhereAsync(Expression<Func<T, bool>> predicate);
+
+	}
 }

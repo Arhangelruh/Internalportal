@@ -61,5 +61,12 @@ namespace InternalPortal.Infrastucture.Data.Repository
         {
             _context.Entry(entity).State = EntityState.Modified;
         }
-    }
+
+		public async Task<int> DeleteWhereAsync(Expression<Func<T, bool>> predicate)
+		{
+			return await _context.Set<T>()
+				.Where(predicate)
+				.ExecuteDeleteAsync();
+		}
+	}
 }
