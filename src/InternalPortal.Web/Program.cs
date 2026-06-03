@@ -43,6 +43,7 @@ builder.Services.AddScoped(typeof(ITestScoreService), typeof(TestScoreService));
 builder.Services.AddScoped(typeof(ITestService), typeof(TestService));
 builder.Services.AddScoped(typeof(ICashTestService), typeof(CashTestService));
 builder.Services.AddScoped(typeof(IUploadFileService), typeof(UploadFileService));
+builder.Services.AddScoped(typeof(IReadingReviewService), typeof(ReadingReviewService));
 
 var physicalProvider = new PhysicalFileProvider(filesDirectory);
 builder.Services.AddSingleton<IFileProvider>(physicalProvider);
