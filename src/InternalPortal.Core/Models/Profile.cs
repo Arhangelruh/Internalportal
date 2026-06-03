@@ -39,5 +39,10 @@
         /// Navigation to TestScore.
         /// </summary>
         public TestScore TestScore { get; set; }
-    }
+
+        /// <summary>
+        /// Navigate to ReadingReview
+        /// </summary>
+		public ICollection<ReadingReview> ReadingReviews { get; set; }
+	}
 }

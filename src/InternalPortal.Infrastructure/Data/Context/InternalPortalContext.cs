@@ -55,7 +55,12 @@ namespace InternalPortal.Infrastucture.Data.Context
         /// </summary>
         public DbSet<UploadFile> UploadFiles { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        /// <summary>
+        /// Reading reviews.
+        /// </summary>
+		public DbSet<ReadingReview> ReadingReviews { get; set; }
+
+		protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder = modelBuilder ?? throw new ArgumentNullException(nameof(modelBuilder));
 
@@ -69,6 +74,7 @@ namespace InternalPortal.Infrastucture.Data.Context
             modelBuilder.ApplyConfiguration(new TestsScoreConfiguration());
             modelBuilder.ApplyConfiguration(new CashTestsConfiguration());
             modelBuilder.ApplyConfiguration(new UploadFileConfiguration());
+            modelBuilder.ApplyConfiguration(new ReadingReviewConfiguration());
 
             base.OnModelCreating(modelBuilder);
         }

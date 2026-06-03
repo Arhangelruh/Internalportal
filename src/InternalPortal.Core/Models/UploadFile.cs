@@ -19,5 +19,10 @@
         /// Trusted file name.
         /// </summary>
         public string TrustedName { get; set; }
-    }
+
+		/// <summary>
+		/// Navigate to ReadingReview
+		/// </summary>
+		public ICollection<ReadingReview> ReadingReviews { get; set; }
+	}
 }

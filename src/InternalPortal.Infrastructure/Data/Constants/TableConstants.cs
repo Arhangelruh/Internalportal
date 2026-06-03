@@ -48,5 +48,10 @@ namespace InternalPortal.Infrastucture.Data.Constants
         /// File table.
         /// </summary>
         public const string UploadFiles = nameof(UploadFiles);
-    }
+
+		/// <summary>
+		/// Reading table.
+		/// </summary>
+		public const string ReadingReview = nameof(ReadingReview);
+	}
 }
