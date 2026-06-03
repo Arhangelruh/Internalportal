@@ -4,14 +4,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InternalPortal.Core.Services
 {
-    public class UploadFileService : IUploadFileService
+    public class UploadFileService(IRepository<UploadFile> repository, IReadingReviewService readingReview) : IUploadFileService
     {
-        private readonly IRepository<UploadFile> _repository;
-
-        public UploadFileService(IRepository<UploadFile> repository)
-        {
-            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
-        }
+        private readonly IRepository<UploadFile> _repository = repository ?? throw new ArgumentNullException(nameof(repository));	
+        private readonly IReadingReviewService _readinReview = readingReview ?? throw new ArgumentNullException(nameof(readingReview));
 
         public async Task AddAsync(UploadFile uploadFile) {
            
@@ -27,6 +23,8 @@ namespace InternalPortal.Core.Services
 
             _repository.Delete(file);
             await _repository.SaveChangesAsync();
+
+            await _readinReview.DeleteRecordsByFileAsync(fileId);
         }
 
         public async Task<UploadFile> GetFileByIdAsync(int fileId)
