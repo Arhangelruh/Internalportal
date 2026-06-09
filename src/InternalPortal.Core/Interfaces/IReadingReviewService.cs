@@ -14,8 +14,8 @@ namespace InternalPortal.Core.Interfaces
 		/// Get record by document.
 		/// </summary>
 		/// <param name="fileId"></param>
-		/// <returns></returns>
-		Task<List<ReadingReview>> GetRecordsByDocumentAsync(int fileId);
+		/// <returns>List records</returns>
+		Task<List<ReviewDto>> GetRecordsByDocumentAsync(int fileId);
 
 		/// <summary>
 		/// Delete records by user.
@@ -30,5 +30,13 @@ namespace InternalPortal.Core.Interfaces
 		/// <param name="fileId"></param>
 		/// <returns></returns>
 		Task DeleteRecordsByFileAsync(int fileId);
+
+		/// <summary>
+		/// Get record by file and profile id.
+		/// </summary>
+		/// <param name="fileId">file id</param>
+		/// <param name="profileId">profile id</param>
+		/// <returns>Reading review record</returns>
+		Task<ReadingReview>? CheckRecordAsync(int fileId, int profileId);
 	}
 }

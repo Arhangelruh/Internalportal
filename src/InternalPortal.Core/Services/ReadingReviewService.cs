@@ -27,13 +27,32 @@ namespace InternalPortal.Core.Services
 			await _repository.DeleteWhereAsync(x=> x.ProfileId == profileId);
 		}
 
-		public async Task<List<ReadingReview>> GetRecordsByDocumentAsync(int fileId)
+		public async Task<List<ReviewDto>> GetRecordsByDocumentAsync(int fileId)
 		{
 			return await _repository
 			  .GetAll()
 			  .Where(x => x.FileId == fileId)
+			  .Select(x=> new ReviewDto
+			  {
+				  Id = x.Id,
+				  FileName = x.UploadFile.UntrastedName,
+				  UserName = x.Profile.Name,
+				  LastName = x.Profile.LastName,
+				  MiddleName = x.Profile.MiddleName,
+				  ConfirmTime = x.ReviewTime
+			  })
 			  .AsNoTracking()
 			  .ToListAsync();
+		}
+
+		public async Task<ReadingReview>? CheckRecordAsync(int fileId, int profileId)
+		{
+			var record = await _repository.GetEntityAsync(x => x.FileId == fileId && x.ProfileId == profileId);	
+			
+			if (record != null)
+				return record;
+
+			return null;
 		}
 	}
 }
