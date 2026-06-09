@@ -21,10 +21,10 @@ namespace InternalPortal.Core.Services
         {
             var file = await _repository.GetEntityAsync(topic => topic.Id.Equals(fileId));
 
-            _repository.Delete(file);
-            await _repository.SaveChangesAsync();
+			await _readinReview.DeleteRecordsByFileAsync(fileId);
 
-            await _readinReview.DeleteRecordsByFileAsync(fileId);
+			_repository.Delete(file);
+            await _repository.SaveChangesAsync();          
         }
 
         public async Task<UploadFile> GetFileByIdAsync(int fileId)
