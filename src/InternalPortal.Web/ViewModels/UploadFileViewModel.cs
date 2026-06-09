@@ -21,5 +21,10 @@
         /// Extension string.
         /// </summary>
         public string Extension { get; set; }
+
+        /// <summary>
+        /// Key if user already push review button.
+        /// </summary>
+        public bool IsAlreadyDone { get; set; }
     }
 }

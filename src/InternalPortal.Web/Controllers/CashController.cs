@@ -1,31 +1,30 @@
 ﻿using InternalPortal.Core.Interfaces;
+using InternalPortal.Core.Models;
 using InternalPortal.Web.Constants;
 using InternalPortal.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
 using System.Net.Mime;
+using System.Security.Claims;
 
 namespace InternalPortal.Web.Controllers
 {
-    public class CashController : Controller
+    public class CashController(
+		ICashTestService cashTestService,
+		IFileProvider fileProvider,
+		IUploadFileService uploadFileService,
+        IProfileService profileService,
+        IReadingReviewService readingReview
+			) : Controller
     {
-        private readonly ICashTestService _cashTestService;
-        private readonly IFileProvider _fileProvider;
-        private readonly IUploadFileService _uploadFileService;
+        private readonly ICashTestService _cashTestService = cashTestService ?? throw new ArgumentNullException(nameof(cashTestService));
+        private readonly IFileProvider _fileProvider = fileProvider ?? throw new ArgumentNullException(nameof(fileProvider));
+        private readonly IUploadFileService _uploadFileService = uploadFileService ?? throw new ArgumentNullException(nameof(uploadFileService));
+        private readonly IProfileService _profileService = profileService ?? throw new ArgumentNullException( nameof(profileService));
+        private readonly IReadingReviewService _readinReview = readingReview ?? throw new ArgumentNullException(nameof(readingReview));
 
-        public CashController(
-            ICashTestService cashTestService,
-            IFileProvider fileProvider,
-            IUploadFileService uploadFileService
-            )
-        {
-            _cashTestService = cashTestService ?? throw new ArgumentNullException(nameof(cashTestService));
-            _fileProvider = fileProvider ?? throw new ArgumentNullException(nameof(fileProvider));
-            _uploadFileService = uploadFileService ?? throw new ArgumentNullException(nameof(uploadFileService));
-        }
-
-        public IActionResult Cash()
+		public IActionResult Cash()
         {
             return View();
         }
@@ -48,19 +47,35 @@ namespace InternalPortal.Web.Controllers
 
         public async Task<IActionResult> Education()
         {
-            List<UploadFileViewModel> uploadedFiles = [];
+			var profileSID = User.Claims.Where(claim => claim.Type == ClaimTypes.Sid).Select(claim => claim.Value).SingleOrDefault();
+            Profile profile = new();
+
+            if(profileSID != null)
+               profile = await _profileService.GetProfileByUserSIDAsync(profileSID);
+
+
+			List<UploadFileViewModel> uploadedFiles = [];
             var physicalFiles = _fileProvider.GetDirectoryContents(string.Empty);
             foreach (var physicalFile in physicalFiles)
             {
                 var getFileModel = await _uploadFileService.GetFileByGuidAsync(physicalFile.Name);
                 if (getFileModel != null) {
                     var ext = Path.GetExtension(getFileModel.UntrastedName).ToLowerInvariant();
+
+                    var ifRecExist = false;
+                    
+                    var getRecord = await _readinReview.CheckRecordAsync(getFileModel.Id, profile.Id);
+
+                    if(getRecord != null)
+                        ifRecExist = true;
+
                     uploadedFiles.Add(new UploadFileViewModel
                     {
                         Id = getFileModel.Id,
                         TrustedName = getFileModel.TrustedName,
                         UntrastedName = getFileModel.UntrastedName,
-                        Extension = ext
+                        Extension = ext,
+                        IsAlreadyDone = ifRecExist
                     });
                 }
             }
