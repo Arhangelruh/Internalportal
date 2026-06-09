@@ -1,0 +1,40 @@
+﻿@model List<ReviewViewModel>
+
+<div class="confirm-table">
+
+
+    @if (Model.Any())
+    {        
+        <div class="table-actions">
+            <a asp-action="ExportExcel" asp-route-fileId="@ViewData["fileId"]" class="get-excel-report">
+                <img class="excel-ico" title="Excel" src="~/images/Excel_ico.svg"/>            
+            </a>
+        </div>
+        <table class="table">
+            <tr class="confirm-table-header">
+                <th colspan="2">Лист ознакомления по документу: @Model[0].FileName</th>
+            </tr>
+            <tr class="confirm-table-tablenames">
+                <th>Пользователь</th>                
+                <th>Время ознакомления</th>
+            </tr>
+            @foreach (var field in Model)
+            {
+                <tr>
+                    <td>@field.LastName @field.UserName @field.MiddleName</td>                    
+                    <td>
+                        Ознакомлен @field.ConfirmTime.Date.ToShortDateString() в @field.ConfirmTime.ToShortTimeString()
+                    </td>
+                </tr>
+            }
+        </table>
+    }
+    else
+    {
+        <div class="error_mesage">Не найдена информация по запрашиваемому документу.</div>
+    }
+</div>
+
+@section css {
+    <link href="~/css/file.css" rel="stylesheet" asp-append-version="true" />
+}

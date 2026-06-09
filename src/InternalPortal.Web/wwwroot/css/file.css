@@ -1,0 +1,51 @@
+.confirm-table{
+    width: 90%;
+    margin-top: 40px;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    flex-direction: column;
+}
+
+.table{
+   border: 1px solid #88C437;
+    border-collapse: collapse;    
+    width: 98%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.confirm-table-header{
+    height: 40px;
+}
+
+.confirm-table-tablenames{
+    height: 30px;
+}
+
+th{
+    border: 1px solid #88C437;
+    text-align: center;
+}
+
+ td{
+    border: 1px solid #88C437; 
+    text-align: center;
+}
+
+.table-actions{
+    width: 100%;
+    display: flex;
+}
+
+.get-excel-report{
+    width: 30px;
+    margin-right: 50px;
+    margin-left: auto;
+}
+
+.excel-ico{
+    width: 30px;
+}
